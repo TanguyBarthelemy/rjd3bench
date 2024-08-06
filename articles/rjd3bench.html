@@ -161,13 +161,10 @@ specific print(), summary() and plot() functions for objects of class
 <strong>‘JD3TempDisagg’</strong>. print() shows the fitted model,
 summary() also shows extra information about the model and the
 likelihood. plot() displays the decomposition of the disaggregated
-series between regression and the smoothing effect.<br>
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">summary</span>(td_cl) <span class="co"># example of call to summary()</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="sc">==</span><span class="er">=====</span></span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">summary</span>(td_cl) <span class="co"># example of call to summary() </span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="sc">&gt;</span><span class="er">&gt;&gt;&gt;&gt;&gt;&gt;</span> <span class="dv">86</span>d7dbcfc73f5daa891ca3aecbc01f887165d2ed</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">plot</span>(td_cl)</span></code></pre></div>
+series between regression and the smoothing effect.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">td_cl</span><span class="op">)</span> <span class="co"># example of call to summary()</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">td_cl</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="model-based-denton">Model-based Denton<a class="anchor" aria-label="anchor" href="#model-based-denton"></a>
@@ -220,7 +217,7 @@ giving a thorough analysis of the data (and the Benchmark-to-Indicator
 <p>Model-based denton can be called through the
 <strong>denton.modelbased()</strong> function. Here is an example of
 code to apply it to the same data as before.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">td_mbd</span><span class="op">&lt;-</span><span class="fu">rjd3bench</span><span class="fu">::</span><span class="fu"><a href="../reference/denton_modelbased.html">denton_modelbased</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">x</span>, outliers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"2020-01-01"</span><span class="op">=</span><span class="fl">100</span>, <span class="st">"2020-04-01"</span><span class="op">=</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">y_mbd</span><span class="op">&lt;-</span><span class="va">td_mbd</span><span class="op">$</span><span class="va">estimation</span><span class="op">$</span><span class="va">disagg</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">td_mbd</span><span class="op">)</span></span></code></pre></div>
@@ -251,7 +248,7 @@ difference (PSD), etc. The different variants can be called through the
 package.</p>
 <p>Here are a few examples using the table ‘B1G_Y_data’ from
 <strong>qna_data</strong>:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Y</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/stats/ts.html" class="external-link">ts</a></span><span class="op">(</span><span class="va">qna_data</span><span class="op">$</span><span class="va">B1G_Y_data</span><span class="op">[</span>, <span class="st">"B1G_HH"</span><span class="op">]</span>, frequency<span class="op">=</span><span class="fl">1</span>, start<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2009</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">y_d1</span><span class="op">&lt;-</span><span class="fu">rjd3bench</span><span class="fu">::</span><span class="fu"><a href="../reference/denton.html">denton</a></span><span class="op">(</span>t<span class="op">=</span><span class="va">Y</span>, nfreq<span class="op">=</span><span class="fl">4</span><span class="op">)</span> <span class="co"># example of denton PFD without high frequency series</span></span>
@@ -268,7 +265,7 @@ series benchmarked with denton method.</p>
 solution proposed by Di Fonzo and Marini. It can be called through the
 <strong>grp()</strong> function.</p>
 <p>Here is an example on how to use it:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">y_grp</span><span class="op">&lt;-</span><span class="fu">rjd3bench</span><span class="fu">::</span><span class="fu"><a href="../reference/grp.html">grp</a></span><span class="op">(</span>s<span class="op">=</span><span class="va">x</span>, t<span class="op">=</span><span class="va">Y</span><span class="op">)</span></span></code></pre></div>
 <p>The <strong>grp()</strong> function returns the high frequency series
 benchmarked with grp method.</p>
@@ -286,7 +283,7 @@ smoothed. Sub-period estimates are then simply the product between the
 smoothed high frequency BI ratio and the indicator.</p>
 <p>The method can be called through the <strong>cubicspline()</strong>
 function. Here are a few examples on how to use it:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">y_cs1</span><span class="op">&lt;-</span><span class="fu">rjd3bench</span><span class="fu">::</span><span class="fu"><a href="../reference/cubicspline.html">cubicspline</a></span><span class="op">(</span>t<span class="op">=</span><span class="va">Y</span>, nfreq<span class="op">=</span><span class="fl">4</span><span class="op">)</span> <span class="co"># example of cubic spline without high frequency series (smoothing)</span></span>
 <span></span>
 <span><span class="va">x</span><span class="op">&lt;-</span><span class="va">y_cs1</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">y_cs1</span><span class="op">)</span>, mean<span class="op">=</span><span class="fl">0</span>, sd<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span>
