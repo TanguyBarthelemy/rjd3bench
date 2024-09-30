@@ -54,30 +54,12 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">Y</span><span class="op">&lt;-</span><span class="fu">rjd3toolkit</span><span class="fu">::</span><span class="fu"><a href="https://rjdverse.github.io/rjd3toolkit/reference/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="fu">rjd3toolkit</span><span class="fu">::</span><span class="va">retail</span><span class="op">$</span><span class="va">RetailSalesTotal</span>, <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">x</span><span class="op">&lt;-</span><span class="fu">rjd3toolkit</span><span class="fu">::</span><span class="va">retail</span><span class="op">$</span><span class="va">FoodAndBeverageStores</span></span></span>
-<span class="r-in"><span><span class="va">td</span><span class="op">&lt;-</span><span class="fu">rjd3bench</span><span class="fu">::</span><span class="fu"><a href="temporaldisaggregation.html">temporaldisaggregation</a></span><span class="op">(</span><span class="va">Y</span>, indicator<span class="op">=</span><span class="va">x</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu">rjd3toolkit</span><span class="fu">::</span><span class="fu"><a href="https://rjdverse.github.io/rjd3toolkit/reference/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="fu">rjd3toolkit</span><span class="fu">::</span><span class="va">retail</span><span class="op">$</span><span class="va">RetailSalesTotal</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">rjd3toolkit</span><span class="fu">::</span><span class="va">retail</span><span class="op">$</span><span class="va">FoodAndBeverageStores</span></span></span>
+<span class="r-in"><span><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu">rjd3bench</span><span class="fu">::</span><span class="fu"><a href="temporaldisaggregation.html">temporaldisaggregation</a></span><span class="op">(</span><span class="va">Y</span>, indicator <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in `row.names &lt;- `(m, vars):</span> could not find function "row.names &lt;- "</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">td</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Likelihood statistics </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of observations:  19 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of effective observations:  -1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of estimated parameters:  3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LogLikelihood:  -246.6473 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Standard error:  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AIC:  499.2945 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BIC:  502.1278 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Model: Ar1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rho : 0.9809129  ( 0.004501273 )</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Regression model </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>               coef           se         t</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C    -1.381950e+05 53302.135401 -2.592672</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> var1  9.878368e+00     1.334654  7.401446</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'td' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -54,32 +54,12 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">Y</span><span class="op">&lt;-</span><span class="fu">rjd3toolkit</span><span class="fu">::</span><span class="fu"><a href="https://rjdverse.github.io/rjd3toolkit/reference/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="fu">rjd3toolkit</span><span class="fu">::</span><span class="va">retail</span><span class="op">$</span><span class="va">RetailSalesTotal</span>, <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">x</span><span class="op">&lt;-</span><span class="fu">rjd3toolkit</span><span class="fu">::</span><span class="va">retail</span><span class="op">$</span><span class="va">FoodAndBeverageStores</span></span></span>
-<span class="r-in"><span><span class="va">td</span><span class="op">&lt;-</span><span class="fu">rjd3bench</span><span class="fu">::</span><span class="fu"><a href="adl_disaggregation.html">adl_disaggregation</a></span><span class="op">(</span><span class="va">Y</span>, indicator<span class="op">=</span><span class="va">x</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>NaNs produced</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="fu">rjd3toolkit</span><span class="fu">::</span><span class="fu"><a href="https://rjdverse.github.io/rjd3toolkit/reference/aggregate.html" class="external-link">aggregate</a></span><span class="op">(</span><span class="fu">rjd3toolkit</span><span class="fu">::</span><span class="va">retail</span><span class="op">$</span><span class="va">RetailSalesTotal</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">rjd3toolkit</span><span class="fu">::</span><span class="va">retail</span><span class="op">$</span><span class="va">FoodAndBeverageStores</span></span></span>
+<span class="r-in"><span><span class="va">td</span> <span class="op">&lt;-</span> <span class="fu">rjd3bench</span><span class="fu">::</span><span class="fu"><a href="adl_disaggregation.html">adl_disaggregation</a></span><span class="op">(</span><span class="va">Y</span>, indicator <span class="op">=</span> <span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .jcall("jdplus/benchmarking/base/r/TemporalDisaggregation", "Ljdplus/benchmarking/base/core/univariate/ADLResults;",     "processADL", jseries, constant, trend, jindicators, conversion,     phi, phi.fixed, phi.truncated, xar):</span> method processADL with signature (Ljdplus/toolkit/base/api/timeseries/TsData;ZZ[Ljdplus/toolkit/base/api/timeseries/TsData;Ljava/lang/String;IZILjava/lang/String;)Ljdplus/benchmarking/base/core/univariate/ADLResults; not found</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">td</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Likelihood statistics </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of observations:  19 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of effective observations:  -1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of estimated parameters:  2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LogLikelihood:  -211.6667 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Standard error:  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AIC:  427.3333 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BIC:  428.8785 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Model: FREE </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rho : 0.98097  ( 0.01414316 )</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Regression model </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          coef       se         t</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -1542.99264 1208.321 -1.276972</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    15.74617      NaN       NaN</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   -15.59888      NaN       NaN</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'td' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
