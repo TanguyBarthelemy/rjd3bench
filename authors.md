@@ -4,23 +4,25 @@
 
 - **Jean Palate**. Author.
 
-- **Corentin Lemasson**. Maintainer, contributor.
+- **Corentin Lemasson**. Author, maintainer.
 
 - **Tanguy Barthelemy**. Contributor, artist.
+
+- **Nikolina Rizanovska**. Contributor.
 
 ## Citation
 
 Source:
 [`DESCRIPTION`](https://github.com/rjdverse/rjd3bench/blob/develop/DESCRIPTION)
 
-Palate J (2026). *rjd3bench: Interface to 'JDemetra+ 3.x' time series
-analysis software*. R package version 3.1.0.9000,
+Palate J, Lemasson C (2026). *rjd3bench: Temporal Disaggregation and
+Benchmarking in 'JDemetra+' 3.x*. R package version 3.1.2.9000,
 <https://github.com/rjdverse/rjd3bench>.
 
     @Manual{,
-      title = {rjd3bench: Interface to 'JDemetra+ 3.x' time series analysis software},
-      author = {Jean Palate},
+      title = {rjd3bench: Temporal Disaggregation and Benchmarking in 'JDemetra+' 3.x},
+      author = {Jean Palate and Corentin Lemasson},
       year = {2026},
-      note = {R package version 3.1.0.9000},
+      note = {R package version 3.1.2.9000},
       url = {https://github.com/rjdverse/rjd3bench},
     }

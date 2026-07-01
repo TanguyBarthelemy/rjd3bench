@@ -1,4 +1,4 @@
-# Reconciliation by means of the Multivariate Cholette method
+# Reconciliation by means of the Multivariate Cholette Method
 
 This is a multivariate extension of the Cholette benchmarking method
 which can be used for the purpose of reconciliation. While standard
@@ -18,8 +18,8 @@ multivariatecholette(
   xlist,
   tcvector = NULL,
   ccvector = NULL,
-  rho = 1,
-  lambda = 0.8
+  rho = 0.8,
+  lambda = 0.5
 )
 ```
 
@@ -27,69 +27,75 @@ multivariatecholette(
 
 - xlist:
 
-  a named list of ts objects including all input. Each element of the
-  list should correspond to one input series (a preliminary series, a
-  low-frequency series corresponding to one of the temporal aggregation
-  constraints or a high-frequency series corresponding to one of the
-  contemporaneous constraints).
+  A named list of `ts` objects containing all input. Each element should
+  correspond to one input series: a preliminary series, a low-frequency
+  series representing a temporal aggregation constraint, or a
+  high-frequency series representing a contemporaneous constraint.
 
 - tcvector:
 
-  a character vector defining each temporal constraints. Each element of
-  the vector must be written as "Y = sum(x)" where "Y" is the name of a
-  low frequency temporal constraint and "x" is the name of a
-  high-frequency preliminary series. The names are the one given in the
-  'xlist' argument. Default is NULL, which means that no temporal
-  constraint is considered.
+  A character vector defining the temporal constraints. Each element
+  must be written in the form `"Y = sum(x)"`, where `"Y"` is the name of
+  a low-frequency temporal constraint and `"x"` is the name of a
+  high-frequency preliminary series. The names must match those provided
+  in `xlist`. The default is `NULL`, indicating that no temporal
+  constraints are considered.
 
 - ccvector:
 
-  a character vector defining each contemporaneous constraints. Each
-  element of the vector must be written in the form
-  "z=\[w1\*\]x1+...+\[wn\*\]xn" or "c=\[w1\*\]x1+...+\[wn\*\]xn" where
-  "z" is the name of a high frequency contemporaneous constraint, wj are
-  optional numeric weights, "x1,...,xn" are the names of the
-  high-frequency preliminary series and c is a constant. The "+"
-  operator can be replaced by "-". The names of the contemporaneous
-  constraint(s) and the preliminary series are the one given in the
-  'xlist' argument. Note that any series put on the left hand side
-  cannot appear on the right hand side of any other constraint. This is
-  because left hand side quantities are fixed while right hand side
-  quantities are adjusted so the equality holds. Default is NULL, which
-  means that no contemporaneous constraint is considered. This is
-  equivalent to applying the univariate Cholette method to each of the
-  preliminary series separately.
+  NULL (default) or a character vector defining each contemporaneous
+  constraints. If NULL, no contemporaneous constraint is considered.This
+  is equivalent to applying the univariate Cholette method to each of
+  the preliminary series separately. Otherwise, each element of the
+  vector must be written in the form \\z=w_1 x_1+\ldots+w_n x_n\\ or
+  \\c=w_1 x_1+\ldots+w_n x_n\\ where:
+
+  - \\z\\ is the name of a high-frequency contemporaneous constraint,
+
+  - \\(w_1,\ldots,w_n)\\ are optional numeric weights,
+
+  - \\(x_1,\ldots,x_n)\\ are the names of the high-frequency preliminary
+    series and
+
+  - \\c\\ is a constant.
+
+  The \\+\\ operator can be replaced by \\-\\. The names of the
+  contemporaneous constraint(s) and the preliminary series are the one
+  given in the `xlist` argument.
+
+  **Important**: Any series placed on the left-hand side of a constraint
+  cannot appear on the right-hand side of any other constraint. This is
+  because quantities on the left-hand side are fixed, while those on the
+  right-hand side are adjusted to satisfy the equality.
 
 - rho:
 
-  Numeric. Smoothing parameter whose value should be between 0 and 1.
-  See vignette for more information on the choice of the rho parameter.
+  Numeric. The smoothing parameter whose value must lie between 0 and 1.
+  The default is `0.8`. See the package vignette for more information on
+  the choice of the `rho` parameter.
 
 - lambda:
 
-  Numeric. Adjustment model parameter. Typically, lambda = 0 for
-  additive benchmarking and lambda close to 1 to approach proportional
-  benchmarking. Setting lambda = 1 is also an option but it should be
-  used with caution as, in the case of a multivariate model, it may
-  sometimes result in benchmarked series whose level differs strongly
-  from the preliminary series. See vignette for more information on the
-  choice of the lambda parameter.
+  Numeric. The adjustment model parameter. Typical values include
+  `lambda = 0`, `lambda = 0.5` (the default) and `lambda = 1`. See the
+  package vignette for more information on the choice of the `lambda`
+  parameter.
 
 ## Value
 
-a named list with the benchmarked series is returned
+A named list containing the benchmarked series is returned.
 
 ## See also
 
 For more information, see the vignette:
 
-[`browseVignettes`](https://rdrr.io/r/utils/browseVignettes.html)
-`browseVignettes(package = "rjd3bench")`
+[`utils::browseVignettes()`](https://rdrr.io/r/utils/browseVignettes.html),
+e.g. `browseVignettes(package = "rjd3bench")`
 
 ## Examples
 
 ``` r
-# Example 1: one "standard" contemporaneous constraint: x1+x2+x3 = z
+# Example 1: one "standard" contemporaneous constraint: z=x1+x2+x3
 
 x1 <- ts(c(7, 7.2, 8.1, 7.5, 8.5, 7.8, 8.1, 8.4), frequency = 4, start = c(2010, 1))
 x2 <- ts(c(18, 19.5, 19.0, 19.7, 18.5, 19.0, 20.3, 20.0), frequency = 4, start = c(2010, 1))
@@ -101,7 +107,7 @@ Y1 <- ts(c(30.0, 30.6), frequency = 1, start = c(2010, 1))
 Y2 <- ts(c(80.0, 81.2), frequency = 1, start = c(2010, 1))
 Y3 <- ts(c(8.0, 8.1), frequency = 1, start = c(2010, 1))
 
-### check consistency between temporal and contemporaneous constraints
+## Check consistency between temporal and contemporaneous constraints
 lfs <- cbind(Y1,Y2,Y3)
 rowSums(lfs) - stats::aggregate.ts(z) # should all be 0
 #> Time Series:
@@ -112,9 +118,47 @@ rowSums(lfs) - stats::aggregate.ts(z) # should all be 0
 
 data_list <- list(x1 = x1, x2 = x2, x3 = x3, z = z, Y1 = Y1, Y2 = Y2, Y3 = Y3)
 tc <- c("Y1 = sum(x1)", "Y2 = sum(x2)", "Y3 = sum(x3)") # temporal constraints
-cc <- c("z = x1+x2+x3") # contemporaneous constraints
+cc <- c("z = x1+x2+x3") # (binding) contemporaneous constraint
+cc_nb <- c("0 = x1+x2+x3-z") # non-binding contemporaneous constraint
 
-multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc, rho = 1, lambda = .5) # Denton
+## Run function with default values for rho and lambda
+multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc)
+#> $x1
+#>          Qtr1     Qtr2     Qtr3     Qtr4
+#> 2010 7.069397 7.385899 8.058519 7.486185
+#> 2011 7.961343 6.987044 7.570753 8.080860
+#> 
+#> $x2
+#>          Qtr1     Qtr2     Qtr3     Qtr4
+#> 2010 18.55572 20.58942 19.80927 21.04559
+#> 2011 19.16716 19.25396 21.37039 21.40849
+#> 
+#> $x3
+#>          Qtr1     Qtr2     Qtr3     Qtr4
+#> 2010 1.474880 1.824683 2.032208 2.668230
+#> 2011 2.171499 1.658994 1.958861 2.310646
+#> 
+
+## Run function with some trade-off values for rho and lambda
+multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc, rho = .5, lambda = .5)
+#> $x1
+#>          Qtr1     Qtr2     Qtr3     Qtr4
+#> 2010 7.051902 7.371871 8.069296 7.506931
+#> 2011 7.916967 6.956146 7.572586 8.154301
+#> 
+#> $x2
+#>          Qtr1     Qtr2     Qtr3     Qtr4
+#> 2010 18.55737 20.59774 19.80615 21.03874
+#> 2011 19.19172 19.27605 21.37229 21.35994
+#> 
+#> $x3
+#>          Qtr1     Qtr2     Qtr3     Qtr4
+#> 2010 1.490728 1.830389 2.024550 2.654333
+#> 2011 2.191317 1.667802 1.955124 2.285758
+#> 
+
+## Run function with the value of rho corresponding to Denton or Cholette
+multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc, rho = 1) # Denton
 #> $x1
 #>          Qtr1     Qtr2     Qtr3     Qtr4
 #> 2010 7.045542 7.376876 8.064691 7.512891
@@ -130,7 +174,7 @@ multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc, rho = 1, l
 #> 2010 1.468420 1.826157 2.037007 2.668416
 #> 2011 2.154551 1.646451 1.959538 2.339460
 #> 
-multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc, rho = 0.729, lambda = .5) # Cholette
+multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc, rho = 0.729) # Cholette
 #> $x1
 #>          Qtr1     Qtr2     Qtr3     Qtr4
 #> 2010 7.070672 7.385807 8.059196 7.484325
@@ -146,21 +190,46 @@ multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc, rho = 0.72
 #> 2010 1.478117 1.825096 2.030295 2.666492
 #> 2011 2.176725 1.662357 1.958353 2.302565
 #> 
-multivariatecholette(xlist = data_list, tcvector = NULL, ccvector = cc, rho = 1, lambda = .5) # no temporal constraints
+
+## Run function without temporal constraints
+multivariatecholette(xlist = data_list, tcvector = NULL, ccvector = cc)
 #> $x1
-#>            Qtr1       Qtr2       Qtr3       Qtr4
-#> 2010 0.09471188 0.24191380 0.61537179 0.19776270
-#> 2011 0.75425553 0.33620487 0.74406548 0.97135123
+#>          Qtr1     Qtr2     Qtr3     Qtr4
+#> 2010 7.113659 7.478203 8.248726 7.816905
+#> 2011 8.516160 7.636314 8.272427 8.749182
 #> 
 #> $x2
 #>          Qtr1     Qtr2     Qtr3     Qtr4
-#> 2010 19.70581 21.39462 20.60378 21.06272
-#> 2011 19.88066 20.29720 22.26361 22.09731
+#> 2010 18.42655 20.40889 19.55929 20.71713
+#> 2011 18.71800 18.74819 20.84794 20.93202
 #> 
 #> $x3
 #>          Qtr1     Qtr2     Qtr3     Qtr4
-#> 2010 7.299482 8.163465 8.680845 9.939513
-#> 2011 8.665084 7.266593 7.892321 8.731341
+#> 2010 1.559789 1.912911 2.091986 2.665970
+#> 2011 2.065836 1.515500 1.779636 2.118795
+#> 
+
+## Run function considering non-binding contemporaneous constraint
+multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc_nb)
+#> $x1
+#>          Qtr1     Qtr2     Qtr3     Qtr4
+#> 2010 7.115859 7.359053 8.100144 7.424944
+#> 2011 8.025433 7.118789 7.522649 7.933128
+#> 
+#> $x2
+#>          Qtr1     Qtr2     Qtr3     Qtr4
+#> 2010 18.68742 20.52354 19.90744 20.88160
+#> 2011 19.30812 19.57491 21.25568 21.06129
+#> 
+#> $x3
+#>          Qtr1     Qtr2     Qtr3     Qtr4
+#> 2010 1.488415 1.821166 2.043697 2.646722
+#> 2011 2.184895 1.685557 1.950390 2.279159
+#> 
+#> $z
+#>          Qtr1     Qtr2     Qtr3     Qtr4
+#> 2010 27.29169 29.70376 30.05128 30.95327
+#> 2011 29.51845 28.37926 30.72871 31.27357
 #> 
 
 # Example 2: two contemporaneous constraints: x1+3*x2+0.5*x3+x4+x5 = z1 and x1+x2 = x4
@@ -180,8 +249,14 @@ Y4 <- ts(c(40.0,41.0), frequency=1, start=c(2010,1))
 Y5 <- ts(c(25.0,20.0), frequency=1, start=c(2010,1))
 
 ### check consistency between temporal and contemporaneous constraints
-lfs <- cbind(Y1,3*Y2,0.5*Y3,Y4,Y5)
-rowSums(lfs) - stats::aggregate.ts(z1) # should all be 0
+wlfs <- cbind(Y1,3*Y2,0.5*Y3,Y4,Y5)
+rowSums(wlfs) - stats::aggregate.ts(z1) # cc1: should all be 0
+#> Time Series:
+#> Start = 2010 
+#> End = 2011 
+#> Frequency = 1 
+#> [1] 0 0
+Y1 + Y2 - Y4 # cc2: should all be 0
 #> Time Series:
 #> Start = 2010 
 #> End = 2011 
@@ -195,27 +270,27 @@ cc <- c("z1=x1+3*x2+0.5*x3+x4+x5", "0=x1+x2-x4")
 multivariatecholette(xlist = data.list, tcvector = tc, ccvector = cc)
 #> $x1
 #>          Qtr1     Qtr2     Qtr3     Qtr4
-#> 2010 7.656913 7.459133 7.691486 7.192468
-#> 2011 7.202555 7.844736 7.928212 7.524497
+#> 2010 7.474738 7.463946 7.725598 7.335718
+#> 2011 7.277376 7.707087 7.882331 7.633207
 #> 
 #> $x2
 #>          Qtr1     Qtr2     Qtr3     Qtr4
-#> 2010 2.038004 2.240979 2.542287 3.178730
-#> 2011 2.690178 2.243273 2.563886 3.002663
+#> 2010 2.187694 2.182714 2.536362 3.093230
+#> 2011 2.650051 2.340300 2.585344 2.924305
 #> 
 #> $x3
 #>          Qtr1     Qtr2     Qtr3     Qtr4
-#> 2010 20.29245 20.00733 19.93548 19.76474
-#> 2011 19.18196 19.81496 20.94547 21.05761
+#> 2010 19.59898 20.17348 20.02703 20.20051
+#> 2011 19.33206 19.71691 20.95828 20.99275
 #> 
 #> $x4
 #>           Qtr1      Qtr2      Qtr3      Qtr4
-#> 2010  9.694917  9.700111 10.233773 10.371198
-#> 2011  9.892733 10.088009 10.492098 10.527160
+#> 2010  9.662432  9.646660 10.261960 10.428948
+#> 2011  9.927427 10.047387 10.467675 10.557512
 #> 
 #> $x5
 #>          Qtr1     Qtr2     Qtr3     Qtr4
-#> 2010 4.487934 7.914155 6.380138 6.217772
-#> 2011 4.043199 4.529957 5.315297 6.111547
+#> 2010 4.600257 8.054511 6.289842 6.055390
+#> 2011 3.979014 4.466173 5.314820 6.239993
 #> 
 ```
