@@ -1,6 +1,6 @@
 # Changelog
 
-## rjd3bench 3.1.2.9000
+## rjd3bench 3.1.3.9000
 
 All notable changes to this project will be documented in this file.
 
@@ -8,12 +8,18 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### [Unreleased](https://github.com/rjdverse/rjd3bench/compare/v3.1.2...HEAD)
+### [Unreleased](https://github.com/rjdverse/rjd3bench/compare/v3.1.3...HEAD)
 
 #### Added
 
 - Add function multivariatechowlin() for multivariate temporal
   disaggregation
+
+### [3.1.3](https://github.com/rjdverse/rjd3bench/compare/v3.1.2...v3.1.3) - 2026-07-13
+
+#### Fixed
+
+- Fix error in package installation and update dependencies
 
 ### [3.1.2](https://github.com/rjdverse/rjd3bench/compare/v3.1.1...v3.1.2) - 2026-05-04
 
