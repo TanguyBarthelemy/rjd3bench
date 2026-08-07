@@ -18,6 +18,8 @@ multivariatechowlin(
   freq = 4L,
   rhos = 1,
   var = c("fromUnivariate", "allEquals", "userDefined"),
+  var.includeCov = FALSE,
+  var.shrinkCov = FALSE,
   var.matrix = NULL
 )
 ```
@@ -105,10 +107,24 @@ multivariatechowlin(
   user via the `var.matrix` argument. For additional details, see the
   package vignette.
 
+- var.includeCov:
+
+  Boolean. Indicates whether non-diagonal elements of the innovation
+  variance-covariance matrix may as well be estimated from the residuals
+  of the univariate models. The default is `FALSE`, meaning that only a
+  diagonal matrix is estimated. This argument is used only when
+  `var = "fromUnivariate"`.
+
+- var.shrinkCov:
+
+  Boolean. Indicates whether a shrinkage covariance estimator should be
+  used. See the vignette for more details. This argument is used only
+  when `var = "fromUnivariate"` and `var.includeCov = TRUE`.
+
 - var.matrix:
 
   The variance-covariance matrix of the innovations. This argument is
-  only used when `var = "userDefined"` and must be provided in that
+  used only when `var = "userDefined"` and must be provided in that
   case.
 
 ## Value
@@ -163,7 +179,7 @@ rowSums(cbind(Y1,Y2,Y3)) - stats::aggregate.ts(z) # ok!
 
 # Estimate models and get results
 
-## Mix Chow-Lin - Fernandez
+## Mix Chow-Lin - Fernandez, assuming no covariance in the innovations
 rslt1 <- multivariatechowlin(series = lf_series,
                              constant = c(FALSE, FALSE, TRUE),
                              trend = c(FALSE, FALSE, FALSE),
@@ -173,13 +189,36 @@ rslt1 <- multivariatechowlin(series = lf_series,
                              freq = 4L,
                              rhos = c(0.85, 1.0, 0.9),
                              var = "fromUnivariate",
+                             var.includeCov = FALSE,
+                             var.shrinkCov = FALSE,
                              var.matrix = NULL)
+#> Error in .jcall(obj = "jdplus/benchmarking/base/r/TemporalDisaggregation",     returnSig = "Ljdplus/benchmarking/base/api/multivariate/MultivariateChowLinResults;",     method = "multiChowLin", jdic_series, jcst, jtrend, jarrdic_indic,     jdic_ccseries, jccdef, as.integer(freq), jrhos, var, var.includeCov,     var.shrinkCov, jvar_mat): method multiChowLin with signature (Ljdplus/toolkit/base/r/util/Dictionary;[Z[ZLjdplus/benchmarking/base/r/util/DictionaryGroups;Ljdplus/toolkit/base/r/util/Dictionary;[Ljava/lang/String;I[DLjava/lang/String;ZZLjdplus/toolkit/base/api/math/matrices/Matrix;) not found
 
-d1 <- do.call(cbind, rslt1$estimation$disagg)
-ed1 <- do.call(cbind, rslt1$estimation$edisagg)
+do.call(cbind, rslt1$estimation$disagg) # disaggregated series
+#> Error: object 'rslt1' not found
+
+## Mix Chow-Lin - Fernandez, using a shrinkage covariance estimator for the innovations
+rslt2 <- multivariatechowlin(series = lf_series,
+                             constant = c(FALSE, FALSE, TRUE),
+                             trend = c(FALSE, FALSE, FALSE),
+                             indicators = indic_series,
+                             ccseries = list(z = z),
+                             ccdefinition = "z=y1+y2+y3",
+                             freq = 4L,
+                             rhos = c(0.85, 1.0, 0.9),
+                             var = "fromUnivariate",
+                             var.includeCov = TRUE,
+                             var.shrinkCov = TRUE,
+                             var.matrix = NULL)
+#> Error in .jcall(obj = "jdplus/benchmarking/base/r/TemporalDisaggregation",     returnSig = "Ljdplus/benchmarking/base/api/multivariate/MultivariateChowLinResults;",     method = "multiChowLin", jdic_series, jcst, jtrend, jarrdic_indic,     jdic_ccseries, jccdef, as.integer(freq), jrhos, var, var.includeCov,     var.shrinkCov, jvar_mat): method multiChowLin with signature (Ljdplus/toolkit/base/r/util/Dictionary;[Z[ZLjdplus/benchmarking/base/r/util/DictionaryGroups;Ljdplus/toolkit/base/r/util/Dictionary;[Ljava/lang/String;I[DLjava/lang/String;ZZLjdplus/toolkit/base/api/math/matrices/Matrix;) not found
+
+rslt2$estimation$vcov # variance-covariance matrix of the innovations
+#> Error: object 'rslt2' not found
+do.call(cbind, rslt2$estimation$disagg)
+#> Error: object 'rslt2' not found
 
 ## Fernandez only (Random walk model) with user-defined variance-covariance matrix
-rslt2 <- multivariatechowlin(series = lf_series,
+rslt3 <- multivariatechowlin(series = lf_series,
                              constant = FALSE,
                              trend = FALSE,
                              indicators = indic_series,
@@ -188,8 +227,15 @@ rslt2 <- multivariatechowlin(series = lf_series,
                              freq = 4L,
                              rhos = 1.0,
                              var = "userDefined",
-                             var.matrix = diag(c(0.003,0.01,0.001)))
+                             var.matrix = matrix(
+                                c(0.005, 0.002, 0.001,
+                                  0.002, 0.010, 0.002,
+                                  0.001, 0.002, 0.003),
+                                nrow = 3,
+                                byrow = TRUE)
+                             )
+#> Error in .jcall(obj = "jdplus/benchmarking/base/r/TemporalDisaggregation",     returnSig = "Ljdplus/benchmarking/base/api/multivariate/MultivariateChowLinResults;",     method = "multiChowLin", jdic_series, jcst, jtrend, jarrdic_indic,     jdic_ccseries, jccdef, as.integer(freq), jrhos, var, var.includeCov,     var.shrinkCov, jvar_mat): method multiChowLin with signature (Ljdplus/toolkit/base/r/util/Dictionary;[Z[ZLjdplus/benchmarking/base/r/util/DictionaryGroups;Ljdplus/toolkit/base/r/util/Dictionary;[Ljava/lang/String;I[DLjava/lang/String;ZZLjdplus/toolkit/base/api/math/matrices/Matrix;) not found
 
-d2 <- do.call(cbind, rslt2$estimation$disagg)
-ed2 <- do.call(cbind, rslt2$estimation$edisagg)
+do.call(cbind, rslt3$estimation$disagg)
+#> Error: object 'rslt3' not found
 ```

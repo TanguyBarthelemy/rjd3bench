@@ -55,6 +55,8 @@ extension of the Chow-Lin model or the Random Walk approach (Fernandez).</p>
 <span>  freq <span class="op">=</span> <span class="fl">4L</span>,</span>
 <span>  rhos <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fromUnivariate"</span>, <span class="st">"allEquals"</span>, <span class="st">"userDefined"</span><span class="op">)</span>,</span>
+<span>  var.includeCov <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  var.shrinkCov <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  var.matrix <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -114,9 +116,19 @@ If a single numeric value is provided (default if <code>1</code>, corresponding 
 The default is <code>"fromUnivariate"</code>, meaning that is is estimated from the residuals of the univariate models. Others options include <code>"allEquals"</code>, which assume a diagonal matrix with identical variances (a strong assumption), and <code>"userDefined"</code>, where the matrix is supplied by the user via the <code>var.matrix</code> argument. For additional details, see the package vignette.</p></dd>
 
 
+<dt id="arg-var-includecov">var.includeCov<a class="anchor" aria-label="anchor" href="#arg-var-includecov"></a></dt>
+<dd><p>Boolean. Indicates whether non-diagonal elements of the innovation variance-covariance matrix may as well be estimated from the residuals of the univariate models. The default is <code>FALSE</code>, meaning that only a diagonal matrix is estimated.
+This argument is used only when <code>var = "fromUnivariate"</code>.</p></dd>
+
+
+<dt id="arg-var-shrinkcov">var.shrinkCov<a class="anchor" aria-label="anchor" href="#arg-var-shrinkcov"></a></dt>
+<dd><p>Boolean. Indicates whether a shrinkage covariance estimator should be used. See the vignette for more details.
+This argument is used only when <code>var = "fromUnivariate"</code> and <code>var.includeCov = TRUE</code>.</p></dd>
+
+
 <dt id="arg-var-matrix">var.matrix<a class="anchor" aria-label="anchor" href="#arg-var-matrix"></a></dt>
 <dd><p>The variance-covariance matrix of the innovations.
-This argument is only used when <code>var = "userDefined"</code> and must be provided in that case.</p></dd>
+This argument is used only when <code>var = "userDefined"</code> and must be provided in that case.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -162,7 +174,7 @@ invisibly as a list:</p><ul><li><p><code>regression</code> <code>[[1]]</code> re
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Estimate models and get results</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Mix Chow-Lin - Fernandez</span></span></span>
+<span class="r-in"><span><span class="co">## Mix Chow-Lin - Fernandez, assuming no covariance in the innovations</span></span></span>
 <span class="r-in"><span><span class="va">rslt1</span> <span class="op">&lt;-</span> <span class="fu">multivariatechowlin</span><span class="op">(</span>series <span class="op">=</span> <span class="va">lf_series</span>,</span></span>
 <span class="r-in"><span>                             constant <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                             trend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span><span class="op">)</span>,</span></span>
@@ -172,13 +184,36 @@ invisibly as a list:</p><ul><li><p><code>regression</code> <code>[[1]]</code> re
 <span class="r-in"><span>                             freq <span class="op">=</span> <span class="fl">4L</span>,</span></span>
 <span class="r-in"><span>                             rhos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.85</span>, <span class="fl">1.0</span>, <span class="fl">0.9</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                             var <span class="op">=</span> <span class="st">"fromUnivariate"</span>,</span></span>
+<span class="r-in"><span>                             var.includeCov <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                             var.shrinkCov <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>                             var.matrix <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .jcall(obj = "jdplus/benchmarking/base/r/TemporalDisaggregation",     returnSig = "Ljdplus/benchmarking/base/api/multivariate/MultivariateChowLinResults;",     method = "multiChowLin", jdic_series, jcst, jtrend, jarrdic_indic,     jdic_ccseries, jccdef, as.integer(freq), jrhos, var, var.includeCov,     var.shrinkCov, jvar_mat):</span> method multiChowLin with signature (Ljdplus/toolkit/base/r/util/Dictionary;[Z[ZLjdplus/benchmarking/base/r/util/DictionaryGroups;Ljdplus/toolkit/base/r/util/Dictionary;[Ljava/lang/String;I[DLjava/lang/String;ZZLjdplus/toolkit/base/api/math/matrices/Matrix;) not found</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">d1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">cbind</span>, <span class="va">rslt1</span><span class="op">$</span><span class="va">estimation</span><span class="op">$</span><span class="va">disagg</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ed1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">cbind</span>, <span class="va">rslt1</span><span class="op">$</span><span class="va">estimation</span><span class="op">$</span><span class="va">edisagg</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">cbind</span>, <span class="va">rslt1</span><span class="op">$</span><span class="va">estimation</span><span class="op">$</span><span class="va">disagg</span><span class="op">)</span> <span class="co"># disaggregated series</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'rslt1' not found</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Mix Chow-Lin - Fernandez, using a shrinkage covariance estimator for the innovations</span></span></span>
+<span class="r-in"><span><span class="va">rslt2</span> <span class="op">&lt;-</span> <span class="fu">multivariatechowlin</span><span class="op">(</span>series <span class="op">=</span> <span class="va">lf_series</span>,</span></span>
+<span class="r-in"><span>                             constant <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                             trend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                             indicators <span class="op">=</span> <span class="va">indic_series</span>,</span></span>
+<span class="r-in"><span>                             ccseries <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>z <span class="op">=</span> <span class="va">z</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                             ccdefinition <span class="op">=</span> <span class="st">"z=y1+y2+y3"</span>,</span></span>
+<span class="r-in"><span>                             freq <span class="op">=</span> <span class="fl">4L</span>,</span></span>
+<span class="r-in"><span>                             rhos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.85</span>, <span class="fl">1.0</span>, <span class="fl">0.9</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                             var <span class="op">=</span> <span class="st">"fromUnivariate"</span>,</span></span>
+<span class="r-in"><span>                             var.includeCov <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                             var.shrinkCov <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                             var.matrix <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .jcall(obj = "jdplus/benchmarking/base/r/TemporalDisaggregation",     returnSig = "Ljdplus/benchmarking/base/api/multivariate/MultivariateChowLinResults;",     method = "multiChowLin", jdic_series, jcst, jtrend, jarrdic_indic,     jdic_ccseries, jccdef, as.integer(freq), jrhos, var, var.includeCov,     var.shrinkCov, jvar_mat):</span> method multiChowLin with signature (Ljdplus/toolkit/base/r/util/Dictionary;[Z[ZLjdplus/benchmarking/base/r/util/DictionaryGroups;Ljdplus/toolkit/base/r/util/Dictionary;[Ljava/lang/String;I[DLjava/lang/String;ZZLjdplus/toolkit/base/api/math/matrices/Matrix;) not found</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">rslt2</span><span class="op">$</span><span class="va">estimation</span><span class="op">$</span><span class="va">vcov</span> <span class="co"># variance-covariance matrix of the innovations</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'rslt2' not found</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">cbind</span>, <span class="va">rslt2</span><span class="op">$</span><span class="va">estimation</span><span class="op">$</span><span class="va">disagg</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'rslt2' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Fernandez only (Random walk model) with user-defined variance-covariance matrix</span></span></span>
-<span class="r-in"><span><span class="va">rslt2</span> <span class="op">&lt;-</span> <span class="fu">multivariatechowlin</span><span class="op">(</span>series <span class="op">=</span> <span class="va">lf_series</span>,</span></span>
+<span class="r-in"><span><span class="va">rslt3</span> <span class="op">&lt;-</span> <span class="fu">multivariatechowlin</span><span class="op">(</span>series <span class="op">=</span> <span class="va">lf_series</span>,</span></span>
 <span class="r-in"><span>                             constant <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>                             trend <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>                             indicators <span class="op">=</span> <span class="va">indic_series</span>,</span></span>
@@ -187,10 +222,17 @@ invisibly as a list:</p><ul><li><p><code>regression</code> <code>[[1]]</code> re
 <span class="r-in"><span>                             freq <span class="op">=</span> <span class="fl">4L</span>,</span></span>
 <span class="r-in"><span>                             rhos <span class="op">=</span> <span class="fl">1.0</span>,</span></span>
 <span class="r-in"><span>                             var <span class="op">=</span> <span class="st">"userDefined"</span>,</span></span>
-<span class="r-in"><span>                             var.matrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.003</span>,<span class="fl">0.01</span>,<span class="fl">0.001</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                             var.matrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>                                <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.005</span>, <span class="fl">0.002</span>, <span class="fl">0.001</span>,</span></span>
+<span class="r-in"><span>                                  <span class="fl">0.002</span>, <span class="fl">0.010</span>, <span class="fl">0.002</span>,</span></span>
+<span class="r-in"><span>                                  <span class="fl">0.001</span>, <span class="fl">0.002</span>, <span class="fl">0.003</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                nrow <span class="op">=</span> <span class="fl">3</span>,</span></span>
+<span class="r-in"><span>                                byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                             <span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in .jcall(obj = "jdplus/benchmarking/base/r/TemporalDisaggregation",     returnSig = "Ljdplus/benchmarking/base/api/multivariate/MultivariateChowLinResults;",     method = "multiChowLin", jdic_series, jcst, jtrend, jarrdic_indic,     jdic_ccseries, jccdef, as.integer(freq), jrhos, var, var.includeCov,     var.shrinkCov, jvar_mat):</span> method multiChowLin with signature (Ljdplus/toolkit/base/r/util/Dictionary;[Z[ZLjdplus/benchmarking/base/r/util/DictionaryGroups;Ljdplus/toolkit/base/r/util/Dictionary;[Ljava/lang/String;I[DLjava/lang/String;ZZLjdplus/toolkit/base/api/math/matrices/Matrix;) not found</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">d2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">cbind</span>, <span class="va">rslt2</span><span class="op">$</span><span class="va">estimation</span><span class="op">$</span><span class="va">disagg</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ed2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">cbind</span>, <span class="va">rslt2</span><span class="op">$</span><span class="va">estimation</span><span class="op">$</span><span class="va">edisagg</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">cbind</span>, <span class="va">rslt3</span><span class="op">$</span><span class="va">estimation</span><span class="op">$</span><span class="va">disagg</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'rslt3' not found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
