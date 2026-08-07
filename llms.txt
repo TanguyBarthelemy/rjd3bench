@@ -1,10 +1,10 @@
 # `rjd3bench`
 
-[![R-CMD-check](https://github.com/rjdverse/rjd3bench/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rjdverse/rjd3bench/actions/workflows/R-CMD-check.yaml)
-[![lint](https://github.com/rjdverse/rjd3bench/actions/workflows/lint.yaml/badge.svg)](https://github.com/rjdverse/rjd3bench/actions/workflows/lint.yaml)
+[![R-CMD-check](https://github.com/rjdverse/rjd3bench/actions/workflows/R-CMD-check.yml/badge.svg)](https://github.com/rjdverse/rjd3bench/actions/workflows/R-CMD-check.yml)
+[![lint](https://github.com/rjdverse/rjd3bench/actions/workflows/lint.yml/badge.svg)](https://github.com/rjdverse/rjd3bench/actions/workflows/lint.yml)
 
 [![GH Pages
-built](https://github.com/rjdverse/rjd3bench/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/rjdverse/rjd3bench/actions/workflows/pkgdown.yaml)
+built](https://github.com/rjdverse/rjd3bench/actions/workflows/pkgdown.yml/badge.svg)](https://github.com/rjdverse/rjd3bench/actions/workflows/pkgdown.yml)
 
 ## Overview
 
