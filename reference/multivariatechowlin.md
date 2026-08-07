@@ -192,10 +192,25 @@ rslt1 <- multivariatechowlin(series = lf_series,
                              var.includeCov = FALSE,
                              var.shrinkCov = FALSE,
                              var.matrix = NULL)
-#> Error in .jcall(obj = "jdplus/benchmarking/base/r/TemporalDisaggregation",     returnSig = "Ljdplus/benchmarking/base/api/multivariate/MultivariateChowLinResults;",     method = "multiChowLin", jdic_series, jcst, jtrend, jarrdic_indic,     jdic_ccseries, jccdef, as.integer(freq), jrhos, var, var.includeCov,     var.shrinkCov, jvar_mat): method multiChowLin with signature (Ljdplus/toolkit/base/r/util/Dictionary;[Z[ZLjdplus/benchmarking/base/r/util/DictionaryGroups;Ljdplus/toolkit/base/r/util/Dictionary;[Ljava/lang/String;I[DLjava/lang/String;ZZLjdplus/toolkit/base/api/math/matrices/Matrix;) not found
 
 do.call(cbind, rslt1$estimation$disagg) # disaggregated series
-#> Error: object 'rslt1' not found
+#>               y1       y2       y3
+#> 2010 Q1 6.939861 19.07979 1.080352
+#> 2010 Q2 7.943542 20.14422 1.712236
+#> 2010 Q3 7.103801 20.64915 2.147051
+#> 2010 Q4 8.012796 20.12684 3.060361
+#> 2011 Q1 6.722478 20.39456 2.282963
+#> 2011 Q2 7.460648 19.08720 1.352157
+#> 2011 Q3 8.389319 20.65066 1.860018
+#> 2011 Q4 8.027555 21.06758 2.604862
+#> 2012 Q1 6.733189 19.97505 2.491760
+#> 2012 Q2 7.940522 20.65187 1.607612
+#> 2012 Q3 8.411698 20.64922 1.539082
+#> 2012 Q4 8.114591 21.22386 2.561545
+#> 2013 Q1 6.795370 19.97402 2.530611
+#> 2013 Q2 7.800783 21.12535 1.473870
+#> 2013 Q3 8.533515 20.43936 1.727128
+#> 2013 Q4 8.470332 21.06128 2.468392
 
 ## Mix Chow-Lin - Fernandez, using a shrinkage covariance estimator for the innovations
 rslt2 <- multivariatechowlin(series = lf_series,
@@ -210,12 +225,30 @@ rslt2 <- multivariatechowlin(series = lf_series,
                              var.includeCov = TRUE,
                              var.shrinkCov = TRUE,
                              var.matrix = NULL)
-#> Error in .jcall(obj = "jdplus/benchmarking/base/r/TemporalDisaggregation",     returnSig = "Ljdplus/benchmarking/base/api/multivariate/MultivariateChowLinResults;",     method = "multiChowLin", jdic_series, jcst, jtrend, jarrdic_indic,     jdic_ccseries, jccdef, as.integer(freq), jrhos, var, var.includeCov,     var.shrinkCov, jvar_mat): method multiChowLin with signature (Ljdplus/toolkit/base/r/util/Dictionary;[Z[ZLjdplus/benchmarking/base/r/util/DictionaryGroups;Ljdplus/toolkit/base/r/util/Dictionary;[Ljava/lang/String;I[DLjava/lang/String;ZZLjdplus/toolkit/base/api/math/matrices/Matrix;) not found
 
 rslt2$estimation$vcov # variance-covariance matrix of the innovations
-#> Error: object 'rslt2' not found
+#>               [,1]          [,2]          [,3]
+#> [1,]  1.295161e-03 -0.0011701081 -8.709044e-05
+#> [2,] -1.170108e-03  0.0124887216  3.869829e-04
+#> [3,] -8.709044e-05  0.0003869829  5.469873e-05
 do.call(cbind, rslt2$estimation$disagg)
-#> Error: object 'rslt2' not found
+#>               y1       y2       y3
+#> 2010 Q1 7.032124 18.38361 1.684270
+#> 2010 Q2 7.867589 20.02459 1.907825
+#> 2010 Q3 7.119255 20.72811 2.052637
+#> 2010 Q4 7.981033 20.86370 2.355269
+#> 2011 Q1 6.819908 20.48156 2.098528
+#> 2011 Q2 7.561817 18.55115 1.787037
+#> 2011 Q3 8.271285 20.64734 1.981372
+#> 2011 Q4 7.946990 21.51995 2.233063
+#> 2012 Q1 6.910851 20.10656 2.182591
+#> 2012 Q2 7.892070 20.40384 1.904089
+#> 2012 Q3 8.348688 20.36685 1.884465
+#> 2012 Q4 8.048390 21.62275 2.228855
+#> 2013 Q1 6.989663 20.10942 2.200913
+#> 2013 Q2 7.713462 20.82079 1.865750
+#> 2013 Q3 8.479224 20.27804 1.942738
+#> 2013 Q4 8.417651 21.39175 2.190598
 
 ## Fernandez only (Random walk model) with user-defined variance-covariance matrix
 rslt3 <- multivariatechowlin(series = lf_series,
@@ -234,8 +267,23 @@ rslt3 <- multivariatechowlin(series = lf_series,
                                 nrow = 3,
                                 byrow = TRUE)
                              )
-#> Error in .jcall(obj = "jdplus/benchmarking/base/r/TemporalDisaggregation",     returnSig = "Ljdplus/benchmarking/base/api/multivariate/MultivariateChowLinResults;",     method = "multiChowLin", jdic_series, jcst, jtrend, jarrdic_indic,     jdic_ccseries, jccdef, as.integer(freq), jrhos, var, var.includeCov,     var.shrinkCov, jvar_mat): method multiChowLin with signature (Ljdplus/toolkit/base/r/util/Dictionary;[Z[ZLjdplus/benchmarking/base/r/util/DictionaryGroups;Ljdplus/toolkit/base/r/util/Dictionary;[Ljava/lang/String;I[DLjava/lang/String;ZZLjdplus/toolkit/base/api/math/matrices/Matrix;) not found
 
 do.call(cbind, rslt3$estimation$disagg)
-#> Error: object 'rslt3' not found
+#>               y1       y2       y3
+#> 2010 Q1 6.108983 19.72409 1.266923
+#> 2010 Q2 8.107219 19.93250 1.760283
+#> 2010 Q3 7.529320 20.21029 2.160388
+#> 2010 Q4 8.254477 20.13312 2.812406
+#> 2011 Q1 6.686679 20.40719 2.306128
+#> 2011 Q2 6.797711 19.73210 1.370185
+#> 2011 Q3 8.685776 20.33348 1.880741
+#> 2011 Q4 8.429835 20.72722 2.542946
+#> 2012 Q1 6.400284 20.43743 2.362291
+#> 2012 Q2 7.685207 20.74189 1.772905
+#> 2012 Q3 8.618610 20.41449 1.566905
+#> 2012 Q4 8.495899 20.90620 2.497900
+#> 2013 Q1 6.451413 20.47755 2.371039
+#> 2013 Q2 7.378121 21.19157 1.830307
+#> 2013 Q3 8.590304 20.39480 1.714896
+#> 2013 Q4 9.180162 20.53608 2.283757
 ```
