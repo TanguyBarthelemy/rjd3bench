@@ -3,12 +3,13 @@
 Abstract
 
 The `rjd3bench` package provides a variety of methods for temporal
-disaggregation, interpolation, benchmarking, reconciliation and
-calendarization. It is part of the interface to the ‘JDemetra+’ 3.x time
-series analysis software and incorporates statistical methods described
-in the latest European Statistical System (ESS) guidelines on temporal
-disaggregation, benchmarking, and reconciliation (2018 edition). Most
-algorithms implemented in the package rely on an equivalent state‑space
+disaggregation, interpolation, benchmarking, reconciliation,
+multivariate temporal disaggregation and calendarization. It is part of
+the interface to the ‘JDemetra+’ 3.x time series analysis software and
+incorporates statistical methods described in the latest European
+Statistical System (ESS) guidelines on temporal disaggregation,
+benchmarking, and reconciliation (2018 edition). Most algorithms
+implemented in the package rely on an equivalent state‑space
 representation of the underlying model or mathematical problem, where
 computational efficiency is further improved by replacing matrix
 operations with functional forms, thereby enabling highly efficient
@@ -102,29 +103,33 @@ purpose of temporal disaggregation. Among them, we retrieve the Chow-Lin
 method and its variants Fernandez and Litterman.
 
 Let $`Y_T`$, $`T=1,...,m`$, and $`x_t`$, $`t=1,...,n`$, be, respectively
-the observed low frequency benchmark and the high-frequency indicator of
-an unknown high frequency variable $`y_t`$. Chow-Lin, Fernandez and
+the observed low frequency benchmark and the high-frequency indicators
+of an unknown high frequency variable $`y_t`$. Chow-Lin, Fernandez and
 Litterman can be all expressed with the same equation, but with
 different models for the error term:
+
 ``` math
 y_t = x_t\beta+u_t
 ```
+
 where
 
-$`u_t = \phi u_{t-1} + \epsilon_t`$, with $`|\phi| < 1`$ (Chow-Lin),
+$`u_t = \rho u_{t-1} + \epsilon_t`$, with $`|\rho| < 1`$ (Chow-Lin),
 
 $`u_t = u_{t-1} + \epsilon_t`$ (Fernandez),
 
-$`u_t = u_{t-1} + \phi(\Delta u_{t-1}) + \epsilon_t`$, with
-$`|\phi| < 1`$ (Litterman)
+$`u_t = u_{t-1} + \rho(\Delta u_{t-1}) + \epsilon_t`$, with
+$`|\rho| < 1`$ (Litterman)
 
 The temporal constraint is:
+
 ``` math
 Y = Cy,
 ```
+
 where $`C = I_m \otimes c`$, $`c`$ is a row vector of size $`s`$ which
-is the frequency ratio between the disaggregated/interpolated series and
-the low frequency benchmark. The distinction between temporal
+is the frequency ratio between the disaggregated or interpolated series
+and the low frequency benchmark. The distinction between temporal
 disaggregation and interpolation lies in the definition of this vector
 c:
 
@@ -232,13 +237,16 @@ Denton method and variants are usually expressed in mathematical terms
 as a constrained minimization problem. For example, the widely used
 Denton proportional first difference (PFD) method is usually expressed
 as follows:
+
 ``` math
-min_{y_t}\sum^n_{t=2}\biggl[\frac{y_t}{x_t}-\frac{y_{t-1}}{x_{t-1}}\biggr]^2
+min_{y_t}\sum^n_{t=2}\left[\frac{y_t}{x_t}-\frac{y_{t-1}}{x_{t-1}}\right]^2
 ```
-subject to the temporal constraint (flow variables)
+
+subject to the temporal aggregation constraint (flow variables)
 ``` math
 \sum_{t} y_t = Y_T
 ```
+
 where $`y_t`$ is the value of the estimate of the high frequency series
 at period t, $`x_t`$ is the value of the high frequency indicator at
 period t and $`Y_T`$ is the value of the low frequency series (i.e. the
@@ -247,9 +255,12 @@ benchmark series) at period T.
 Equivalently, the Denton PFD method can also be expressed as a
 statistical model considering the following state space representation
 
-\$\$ \begin{aligned} y_t &= \beta_t x_t \\ \beta\_{t+1} &= \beta_t +
-\varepsilon_t \qquad \varepsilon_t \sim {\sf NID}(0,
-\sigma^2\_{\varepsilon}) \end{aligned} \$\$
+``` math
+\begin{align}
+y_t &= \beta_t x_t \\
+\beta_{t+1} &= \beta_t + \varepsilon_t \qquad \varepsilon_t \sim \mathrm{NID}(0, \sigma^2_{\varepsilon})
+\end{align}
+```
 
 where the temporal constraints are taken care of by considering a
 cumulated series $`y^c_t`$ instead of the original series $`y_t`$.
@@ -304,12 +315,20 @@ print(td_mbd)
 Based on Proietti (2005), we consider a first order Autoregressive
 Distributed Lag model, or ADL(1,1), which takes the form:
 
-\$\$ y_t = \phi y\_{t-1} + m + gt + x_t'\beta_0 + x\_{t-1}'\beta_1 +
-\varepsilon_t \qquad \varepsilon_t \sim {\sf NID}(0, \sigma^2) \qquad
-(1) \$\$ subject to the temporal constraint (flow variables)
+``` math
+y_t = \phi y_{t-1} + m + gt + x_t'\beta_0 + x_{t-1}'\beta_1 + \varepsilon_t
+\qquad 
+\varepsilon_t \sim \mathrm{NID}(0,\sigma^2) 
+\qquad 
+(1)
+```
+
+subject to the temporal constraint (flow variables)
+
 ``` math
 \sum_{t} y_t = Y_T
 ```
+
 where $`y_t`$ is the value of the estimate of the high frequency series
 at period t, $`x_t`$ is the value of the high frequency indicator at
 period t and $`Y_T`$ is the value of the low frequency series (i.e. the
@@ -319,16 +338,27 @@ The ADL model nests the Chow-Lin model and its variants Fernandez and
 Litterman (for Litterman, the ADL model must be formulated in the first
 differences of the dependent and explanatory variables).
 
-Recall the Chow-Lin model \$\$ y_t = x_t\beta + u_t \\ u_t = \phi
-u\_{t-1} + \varepsilon_t \$\$ Combine it into a single equation and
-substitute for $`u_{t-1}`$
+Recall the Chow-Lin model
+
 ``` math
-y_t = x_t\beta + \phi (y_{t-1} - x_{t-1}\beta) + \varepsilon_t
+\begin{align}
+y_t &= x_t\beta + u_t \\
+u_t &= \rho u_{t-1} + \varepsilon_t
+\end{align}
 ```
+
+Combine it into a single equation and substitute for $`u_{t-1}`$
+
+``` math
+y_t = x_t\beta + \rho (y_{t-1} - x_{t-1}\beta) + \varepsilon_t
+```
+
 So, the ADL model corresponds to the Chow-Lin model if
+
 ``` math
 \beta_1 = -\phi\beta_0 \qquad (2)
 ```
+
 and to the Fernandez model if we further assumes that $`\phi = 1`$.
 
 Recall that the Chow-Lin model relies on the strong assumption of that
@@ -422,11 +452,19 @@ the observed low frequency benchmark and a single high-frequency
 indicator of the unknown high frequency target variable $`y_t`$. The
 model is defined as:
 
-\$\$ x_t = a + by_t + u_t \\ u_t = \phi u\_{t-1} + \varepsilon_t \$\$
+``` math
+\begin{align}
+x_t &= a + by_t + u_t \\
+u_t &= \rho u_{t-1} + \varepsilon_t
+\end{align}
+```
+
 subject to the temporal constraint (flow variables)
+
 ``` math
 \sum_{t} y_t = Y_T
 ```
+
 The choice of which variable is dependent and which is independent is
 far from arbitrary. It changes the assumptions and the interpretation of
 the model, and the outcome may be very different too. In particular, if
@@ -503,9 +541,11 @@ benchmarks and the high-frequency preliminary values of an unknown
 target variable $`y_t`$. The objective function of the Denton PFD method
 is as follows (considering the small modification suggested by Cholette
 to deal with the starting conditions of the problem):
+
 ``` math
-min_{y_t}\sum^n_{t=2}\biggl[\frac{y_t}{x_t}-\frac{y_{t-1}}{x_{t-1}}\biggr]^2
+min_{y_t}\sum^n_{t=2}\left[\frac{y_t}{x_t}-\frac{y_{t-1}}{x_{t-1}}\right]^2
 ```
+
 This objective function is minimized subject to the temporal aggregation
 constraints $`\sum_{t\epsilon T} y_t = Y_T`$, $`T=1,...,m`$ (flows
 variables). In other words, the benchmarked series is estimated in such
@@ -573,6 +613,7 @@ following objective function:
 ``` math
 f(x) = \sum_{t=2}^{n}\left(\frac{y_t}{y_{t-1}} - \frac{x_t}{x_{t-1}}\right)^2
 ```
+
 and look for values $`y_t^*`$, $`t=1,...,n`$, which minimize it subject
 to the temporal aggregation constraints
 $`\sum_{t\epsilon T} y_t = Y_T`$, $`T=1,...,m`$ (flows variables). In
@@ -605,11 +646,13 @@ Backward GRP:
 ``` math
 f(x) = \sum_{t=2}^{n}\left(\frac{y_{t-1}}{y_t} - \frac{x_{t-1}}{x_t}\right)^2
 ```
+
 Symmetric GRP:
 ``` math
 f(x) = \frac{1}{2} \sum_{t=2}^{n}\left(\frac{y_t}{y_{t-1}} - \frac{x_t}{x_{t-1}}\right)^2 +
 \frac{1}{2} \sum_{t=2}^{n}\left(\frac{y_{t-1}}{y_t} - \frac{x_{t-1}}{x_t}\right)^2
 ```
+
 Logarithmic GRP:
 ``` math
 f(x) = \sum_{t=2}^{n}\left(log\left(\frac{y_t}{y_{t-1}}\right) - log\left(\frac{x_t}{x_{t-1}}\right) \right)^2
@@ -662,7 +705,7 @@ x <- y_cs1 + rnorm(n = length(y_cs1), mean = 0, sd = 10)
 y_cs2 <- cubicspline(s = x, t = Y) # with a high frequency preliminary series to benchmark
 ```
 
-### Cholette method
+### Cholette
 
 Cholette method is based on a benchmarking methodology developed at
 Statistics Canada. It is a generalized method relying on the principle
@@ -678,6 +721,7 @@ method is as follows (Quenneville et al, 2006):
 ``` math
 f(x) = (1-\rho^2) \left(\frac{x_1 - y_1}{|x_1|^\lambda}\right)^2 + \sum_{t=2}^{n}\left[\left(\frac{x_t - y_t}{|x_t|^\lambda}\right) - \rho \left(\frac{x_{t-1} - y_{t-1}}{|x_{t-1}|^\lambda}\right)\right]^2
 ```
+
 This objective function is minimized subject to the temporal aggregation
 constraints $`\sum_{t\epsilon T} y_t = Y_T`$, $`T=1,...,m`$ (flows
 variables). The method is driven by a couple of parameters:
@@ -705,6 +749,7 @@ b_a &= \frac{\sum_{T=1}^{m}{Y_T} - \sum_{T=1}^{m}{\sum_{t\epsilon T}x_t}}{m} \\
 b_m &= \frac{\sum_{T=1}^{m}{Y_T}}{\sum_{T=1}^{m}{\sum_{t\epsilon T}x_t}}
 \end{aligned}
 ```
+
 If a bias correction factor is considered, the preliminary series is
 re-scaled in the objective function above: $`x_t^*`$ replaces $`x_t`$,
 where $`x_t^*=b_a+x_t`$ in the additive case and
@@ -767,9 +812,9 @@ y_cho5 <- cholette(s = x, t = Y, rho = 0, lambda = 0.5) # pro-rating
 
 This is a multivariate extension of the [Cholette benchmarking
 method](#cholette) which can be used for the purpose of reconciliation.
-While standard benchmarking methods consider one target series at a
-time, reconciliation techniques aim to restore consistency in a system
-of time series with regards to both contemporaneous and temporal
+While standard benchmarking methods consider one time series at a time,
+reconciliation techniques aim to restore consistency in a system of time
+series with regards to both temporal and contemporaneous (or accounting)
 constraints. Reconciliation techniques are typically needed when the
 total and its components are estimated independently (the so-called
 direct approach). The multivariate Cholette method relies on the
@@ -778,27 +823,29 @@ methods such as the multivariate Denton method.
 
 Let
 
-- $`Y_{i,T}`$, $`T=1,...,m`$, $`i=1,...,I`$, be the set of temporal
-  benchmarks
-- $`z_{k,t}`$, $`t=1,...,n`$, $`k=1,...,K`$, be the set of
-  contemporaneous constraints
+- $`Y_{i,T}`$, $`i=1,...,I`$, $`T=1,...,m`$, be the set of temporal
+  benchmarks,
+- $`z_{k,t}`$, $`k=1,...,K`$, $`t=1,...,n`$, be the set of
+  contemporaneous constraints,
 - $`x_{i,t}`$ be the high-frequency preliminary values of the set of the
   unknown target variables $`y_{i,t}`$.
 
 The objective function of the multivariate Cholette method is:
+
 ``` math
 f(x) = (1-\rho^2) \sum_{i=1}^{I}\left(\frac{x_{i,1} - y_{i,1}}{|x_{i,1}|^\lambda}\right)^2 + \sum_{i=1}^{I}\sum_{t=2}^{n}\left[\left(\frac{x_{i,t} - y_{i,t}}{|x_{i,t}|^\lambda}\right) - \rho \left(\frac{x_{i,t-1} - y_{i,t-1}}{|x_{i,t-1}|^\lambda}\right)\right]^2
 ```
+
 This objective function is minimized subject to
 
 - the temporal aggregation constraints
-  $`\sum_{t\epsilon T} y_{i,t} = Y_{i,T}`$, and
+  $`Y_{i,T} = \sum_{t\epsilon T} y_{i,t}`$,
 - the contemporaneous constraints given by
-  $`\sum_{j\epsilon J_k}\omega_{k,j}x_{j,t} = z_{k,t}`$.
+  $`z_{k,t} = \sum_{j\epsilon J_k}\omega_{k,j}y_{j,t}`$.
 
-Note that consistency between the temporal aggregation constraints and
-the contemporaneous constraints is required (see the consistency check
-in the example).
+Consistency between the temporal aggregation constraints and the
+contemporaneous constraints is required (see the consistency check in
+the example).
 
 The method may also be applied in the absence of temporal aggregation
 constraints. The contemporaneous constraints are then imposed by
@@ -814,6 +861,13 @@ condition such as $`z_1=x_1+x_2+x_3`$, one may express a non-binding
 constraint as $`0=x_1+x_2+x_3-z_1`$, which allows the $`z_1`$ series to
 be adjusted as $`x_1`$, $`x_2`$ and $`x_3`$ (weights may be introduced
 if necessary).
+
+Unlike the univariate case, no specific argument is provided in the
+function definition to define the conversion type. However, switching
+from an additive to an average conversion is straightforward: it only
+requires to multiply the temporal benchmarks and/or the contemporaneous
+constraints by the frequency ratio or the number of series,
+respectively.
 
 As in the univariate case, the multivariate Cholette method is driven by
 a couple of parameters:
@@ -844,9 +898,9 @@ a couple of parameters:
   of the [Denton AFD and PFD method](#denton), respectively. Choosing
   $`\lambda = 0.5`$ provides a compromise between the two approaches and
   results in discrepancies being allocated in proportion to the values
-  of the preliminary series. As in the univariate Cholette method,
-  setting $`\lambda = 0.5`$ together with $`\rho = 0`$ yields the naive
-  pro-rating method.
+  of the preliminary series. Finally, as in the univariate Cholette
+  method, setting $`\lambda = 0.5`$ together with $`\rho = 0`$ yields
+  the naive pro-rating method.
 
 The multivariate Cholette method can be called with the
 [`multivariatecholette()`](https://rjdverse.github.io/rjd3bench/reference/multivariatecholette.md)
@@ -905,11 +959,291 @@ rec5 <- multivariatecholette(xlist = data_list, tcvector = NULL, ccvector = cc) 
 rec6 <- multivariatecholette(xlist = data_list, tcvector = tc, ccvector = cc_nb) # non-binding contemporaneous constraint
 ```
 
-### Multivariate Chow-Lin / Fernandez
+### Multivariate Chow-Lin and Fernandez
 
-(UNDER CONSTRUCTION)
+Temporal disaggregation is traditionally carried out on a univariate
+basis, considering one time series at a time. The key limitation of this
+approach is that it ignores the relationships that may exist across
+series. This becomes particularly an issue with direct estimations when
+contemporaneous or accounting constraints must be satisfied. The
+multivariate Chow-Lin and Fernandez models, with the latter also
+commonly referred to as the multivariate random walk model, are
+straightforward extensions of the [univariate Chow-Lin and
+Fernandez](#chowlin) models. They can be used to simultaneously
+disaggregate a system of time series while satisfying contemporaneous or
+accounting constraints, thereby providing a consistent overall picture
+of the underlying data.
+
+Let
+
+- $`Y_{i,T}`$, $`i=1,...,I`$, $`T=1,...,m`$, be the set of temporal
+  benchmarks,
+- $`z_{k,t}`$, $`k=1,...,K`$, $`t=1,...,n`$, be the set of
+  contemporaneous constraints,
+- $`y_{i,t}`$, $`i=1,...,I`$, $`t=1,...,n`$, be the set of the unknown
+  target variables to estimate,
+- $`x_{i,t}`$, $`i=1,...,I`$, $`t=1,...,n`$, be the set of indicators
+  related to the corresponding target variables.
+
+The multivariate Chow-Lin and Fernandez models are defined as:
+
+``` math
+\begin{align}
+y_{i,t} &= \sum_{j=1}^{P_i}{x_{j,t} \beta_{j,i}} + u_{i,t} \\
+u_{i,t} &= \rho_i u_{i, t-1} + \eta_{i,t}, \qquad \eta_{i,t} \sim \mathrm{NID}(0,\Sigma)
+\end{align}
+```
+
+where:
+
+- $`\rho_i = 1`$ (Fernandez), or $`|\rho_i| < 1`$ (Chow-Lin),
+
+- $`\beta_{j,i}`$ is the coefficient linking indicator $`j`$ to variable
+  $`i`$,
+
+- $`u_{i,t}`$ is the error term related to variable $`i`$
+
+This is subject to both:
+
+- the temporal aggregation constraints:
+  $`Y_{i,T} = \sum_{t \epsilon T} {y_{i,t}}`$,
+
+- the contemporaneous constraints:
+  $`z_{k,t} = \sum_{j\epsilon J_k}\omega_{k,j}y_{j,t}`$.
+
+Consistency between the temporal aggregation constraints and the
+contemporaneous constraints is required (see the consistency check in
+the example).
+
+In addition to binding contemporaneous constraints, non-binding
+constraints can also be specified by modifying their formulation in the
+`ccvector` argument. For example, instead of imposing a binding
+condition such as $`z_1=x_1+x_2+x_3`$, one may express a non-binding
+constraint as $`0=x_1+x_2+x_3-z_1`$, which allows the $`z_1`$ series to
+be adjusted as $`x_1`$, $`x_2`$ and $`x_3`$ (weights may be introduced
+if necessary).
+
+Unlike the univariate case, no specific argument is provided in the
+function definition to define the conversion type. However, switching
+from an additive to an average conversion is straightforward: it only
+requires to multiply the temporal benchmarks and/or the contemporaneous
+constraints by the frequency ratio and/or the number of series,
+respectively.
+
+The use of multivariate Chow-Lin and Ferandez models have several
+important implications relative to their univariate counterparts and the
+two-step approach (in which univariate temporal disaggregation
+techniques are carried out first and a reconciliation method, such as
+the [multivariate Cholette](#multicholette), is applied in a second
+stage to restore contemporaneous constraints):
+
+1.  The information embedded in the contemporaneous constraints is taken
+    into account when estimating the regression coefficients. As a
+    result, unlike in the univariate case where the coefficients are
+    estimated solely from low-frequency observations, the coefficient
+    estimates in the multivariate framework are also influenced by the
+    contemporaneous constraints. Consequently, small changes in the
+    estimated coefficients may occur when the series is extended with an
+    additional high-frequency observation, provided that the
+    contemporaneous constraints are updated accordingly.
+
+2.  In the two-step approach, discrepancies arising from contemporaneous
+    constraints are typically distributed in a pre-determined way, often
+    proportionally. In contrast, the multivariate Chow-Lin and Fernandez
+    models have the advantage of accounting specifically for the
+    precision of the disaggregated series, since they are adjusted based
+    on the relative variance of the innovations, the more reliable
+    series being less touched than the less reliable ones.
+
+3.  Existing covariance across series may also be captured in the
+    estimation process.
+
+Points (2) and (3) highlight the predominant role played by $`\Sigma`$,
+the variance-covariance matrix of the innovations. This matrix may be
+provided by the user, either exactly or up to a scaling factor (see
+below). But, by default, it is estimated empirically using the sample
+variance-covariance matrix of the residuals obtained from the
+corresponding univariate models. When necessary, the covariance terms
+can be eliminated by constraining $`\Sigma`$ to be diagonal.
+
+As an alternative, a shrinkage estimator of the variance-covariance
+matrix may be employed. The rationale is that the sample
+variance-covariance matrix can be a poor estimator of the true matrix
+when the number of observations $`n`$ is small relative to the number of
+variables $`p`$, leading to substantial estimation error. Moreover, when
+$`n`$ is too small compared to $`p`$, it cannot even be calculated. The
+shrinkage estimator addresses these issues and always returns a
+well-conditioned and positive definite matrix. The algorithm implemented
+here is based on the paper of Schafer and Strimmer (2005, Target D). The
+covariance terms (while leaving the variance unchanged) are pulled
+downwards or ‘shrunk’ towards the diagonal matrix. The degree of
+shrinkage, given by the shrinkage parameter $`\lambda`$, is determined
+by the variability of the sample correlation matrix, with greater
+shrinkage applied when the estimates are less stable.
+
+Let $`s_{ij}`$ and $`s_{ij}^*`$ denote the sample and shrinkage
+covariance estimates, respectively, and $`r_{ij}`$ and $`r_{ij}^*`$
+their correlation counterparts. Then,
+
+``` math
+s_{ij}^* = r_{ij}^* \sqrt{v_i v_j}
+```
+with
+``` math
+r_{ij}^* = (1 - \hat{\lambda})r_{ij}
+```
+and
+``` math
+\hat{\lambda} = \min\left\{ 1,\, \frac{\sum_{i \ne j} \widehat{\operatorname{Var}}(r_{ij})} {\sum_{i \ne j} r_{ij}^{2}} \right\}
+```
+
+Other variants of the shrinkage estimator can also be considered. For
+instance, shrinkage may applied not only to the covariance terms but
+also to the variances. This option is not implemented in the package,
+but it can be achieved using other packages such as **‘corpcor’**, with
+the resulting variance-covariance matrix supplied by the user through
+the `var.matrix` argument.
+
+As mentioned earlier, the variance-covariance matrix of the innovations
+that is considered can be assumed to correspond either exactly to the
+true matrix, or only up to a scaling factor. When $`\Sigma`$ is
+estimated empirically from the residuals of the corresponding univariate
+models, as is done by default, the former assumption seems a natural
+choice. However, when $`\Sigma`$ is supplied by the user, accounting for
+an unknown scaling factor may be more appropriate. Setting
+`rescale.variance = TRUE` rescales the variance of the estimates using
+the residuals of the multivariate model. While this option does not
+affect the disaggregated series themselves, it does influence the
+standard errors associated with both the disaggregated series and the
+estimated coefficients.
+
+The multivariate Chow-Lin and Fernandez methods can be called with the
+[`multivariatechowlin()`](https://rjdverse.github.io/rjd3bench/reference/multivariatechowlin.md)
+function. The output of the
+[`multivariatechowlin()`](https://rjdverse.github.io/rjd3bench/reference/multivariatechowlin.md)
+function contains the disaggregated series and the most important
+information about the multivariate regression including the estimates of
+model coefficients, the variance-covariance matrix of the innovations
+and the decomposition of the disaggregated series. A print() and
+summary() function can also be applied on the output object.
+
+In practice, the multivariate Chow-Lin and Fernandez models are also
+estimated based on an equivalent state space representation of the
+model. Therefore, the remark made concerning the “hidden” constant term
+in the [univariate Fernandez](#chowlin) model remains valid in the
+multivariate case.
+
+``` r
+
+# Example: multivariate Chow-Lin and Fernandez models
+
+# Low-frequency data
+Y1 <- ts(c(30.0, 30.6, 31.2, 31.6), frequency = 1, start = c(2010, 1))
+Y2 <- ts(c(80.0, 81.2, 82.5, 82.6), frequency = 1, start = c(2010, 1))
+Y3 <- ts(c(8.0, 8.1, 8.2, 8.2), frequency = 1, start = c(2010, 1))
+lf_series <- list(y1 = Y1, y2 = Y2, y3 = Y3)
+
+# Contemporaneous constraint
+z <- ts(c(27.1, 29.8, 29.9, 31.2, 29.4, 27.9, 30.9, 31.7, 29.2, 30.2, 30.6, 31.9, 29.3, 30.4, 30.7, 32.0), frequency = 4, start = c(2010, 1))
+
+# High-frequency indicators
+x11 <- ts(c(7.0, 7.2, 8.1, 7.5, 8.5, 7.8, 8.1, 8.4, 8.6, 7.8, 8.0, 8.3, 8.7, 7.9, 8.0, 8.6), frequency = 4, start = c(2010, 1))
+x12 <- ts(c(18.0, 19.5, 19.0, 19.7, 18.5, 19.0, 20.3, 20.0, 18.6, 19.5, 20.4, 20.1, 18.7, 19.1, 20.4, 20.8), frequency = 4, start = c(2010, 1))
+x2 <- NULL
+x3 <- ts(c(1.5, 1.8, 2.0, 2.5, 2.0, 1.5, 1.7, 2.1, 2.1, 1.6, 1.6, 2.2, 2.3, 1.7, 1.9, 2.3), frequency = 4, start = c(2010, 1))
+indic_series <- list(y1 = list(x11, x12), y2 = NULL, y3 = x3)
+
+# Check consistency between temporal and contemporaneous constraints
+as.numeric(rowSums(cbind(Y1, Y2, Y3)) - stats::aggregate.ts(z)) # should all be 0
+#> [1]  0.000000e+00  1.421085e-14  0.000000e+00 -1.421085e-14
+
+# Estimate models and get results
+
+## Mix Chow-Lin and Fernandez definitions
+
+### with var-cov matrix estimated from the univariate models, assuming zero covariances
+mtd1 <- multivariatechowlin(
+    series = lf_series,
+    constant = c(FALSE, FALSE, TRUE),
+    trend = c(FALSE, FALSE, FALSE),
+    indicators = indic_series,
+    ccseries = list(z = z),
+    ccdefinition = "z=y1+y2+y3",
+    freq = 4L,
+    rho = c(0.85, 1.0, 0.9),
+    var = "fromUnivariate",
+    var.includeCov = FALSE,
+    var.shrinkCov = FALSE
+)
+
+mtd1$estimation$var$vcov # variance-covariance matrix of the innovations
+#>             [,1]       [,2]         [,3]
+#> [1,] 0.001433366 0.00000000 0.0000000000
+#> [2,] 0.000000000 0.01248872 0.0000000000
+#> [3,] 0.000000000 0.00000000 0.0008793077
+do.call(cbind, mtd1$estimation$disagg) # disaggregated series
+#>               y1       y2       y3
+#> 2010 Q1 6.939861 19.07979 1.080352
+#> 2010 Q2 7.943542 20.14422 1.712236
+#> 2010 Q3 7.103801 20.64915 2.147051
+#> 2010 Q4 8.012796 20.12684 3.060361
+#> 2011 Q1 6.722478 20.39456 2.282963
+#> 2011 Q2 7.460648 19.08720 1.352157
+#> 2011 Q3 8.389319 20.65066 1.860018
+#> 2011 Q4 8.027555 21.06758 2.604862
+#> 2012 Q1 6.733189 19.97505 2.491760
+#> 2012 Q2 7.940522 20.65187 1.607612
+#> 2012 Q3 8.411698 20.64922 1.539082
+#> 2012 Q4 8.114591 21.22386 2.561545
+#> 2013 Q1 6.795370 19.97402 2.530611
+#> 2013 Q2 7.800783 21.12535 1.473870
+#> 2013 Q3 8.533515 20.43936 1.727128
+#> 2013 Q4 8.470332 21.06128 2.468392
+
+### with var-cov matrix estimated from the univariate models, using a shrinkage estimator for the covariance
+mtd2 <- multivariatechowlin(
+    series = lf_series,
+    constant = c(FALSE, FALSE, TRUE),
+    trend = c(FALSE, FALSE, FALSE),
+    indicators = indic_series,
+    ccseries = list(z = z),
+    ccdefinition = "z=y1+y2+y3",
+    freq = 4L,
+    rho = c(0.85, 1.0, 0.9),
+    var = "fromUnivariate",
+    var.includeCov = TRUE,
+    var.shrinkCov = TRUE
+)
+
+## Multivariate random walk model (multivariate Fernandez)
+
+### with var-cov matrix provided by the user
+mtd3 <- multivariatechowlin(
+    series = lf_series,
+    constant = FALSE,
+    trend = FALSE,
+    indicators = indic_series,
+    ccseries = list(z = z),
+    ccdefinition = "z=y1+y2+y3",
+    freq = 4L,
+    rho = 1.0,
+    var = "userDefined",
+    var.matrix = matrix(
+        c(
+            0.005, 0.002, 0.001,
+            0.002, 0.010, 0.002,
+            0.001, 0.002, 0.003
+        ),
+        nrow = 3,
+        byrow = TRUE
+    ),
+    rescale.variance = TRUE
+)
+```
 
 ## Calendarization
+
+### Calendarization with Denton
 
 Time series data do not always coincide with calendar periods (e.g.,
 fiscal years starting in March-April or retail data collected in
@@ -929,13 +1263,17 @@ Based on the paper from Quenneville et al (2012), the temporal
 disaggregation step is performed by considering a state-space
 representation of the Denton proportional first difference (PFD) method.
 Recall the objective function of the (modified) Denton PFD method
+
 ``` math
-min_{y_t}\sum^n_{t=2}\biggl[\frac{y_t}{x_t}-\frac{y_{t-1}}{x_{t-1}}\biggr]^2
+min_{y_t}\sum^n_{t=2}\left[\frac{y_t}{x_t}-\frac{y_{t-1}}{x_{t-1}}\right]^2
 ```
+
 which is minimized under the temporal aggregation constraints
+
 ``` math
 \sum_{t\epsilon l} y_t = Y_l
 ```
+
 $`Y_l`$, $`l=1,...,q`$, are the observed values to be distributed and
 $`x_t`$, $`t=1,...,n`$ are the daily indicator values that represent the
 daily movement of the unknown target variable $`y_t`$. In the absence of
@@ -1087,3 +1425,7 @@ The view from the trenches. *Statistica Neerlandica, Wiley*.
 
 Santos Silva, J., Cardoso, F.N. (2001). The Chow-Lin method using
 dynamic models. *Economic Modelling, 18 (2). pp. 269-280*.
+
+Schafer, J., Strimmer, K. (2005). A Shrinkage Approach to Large-Scale
+Covariance Matrix Estimation and Implications for Functional Genomics.
+*Statistical Applications in Genetics and Molecular Biology, 4, 32.*.

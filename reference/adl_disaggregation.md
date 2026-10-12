@@ -78,27 +78,29 @@ adl_disaggregation(
 ## Value
 
 An object of class "JD3_ADLDISAGG_RSLTS" is returned. The following are
-returned invisibly as a list:
+returned as a list:
 
 - `regression` `[[1]]` regression coefficients;
 
-- `estimation` `[[2]]` disaggregated Time-Series and standard deviation,
+- `estimation` `[[2]]` disaggregated time series and standard errors,
   parameter and residuals;
 
 - `likelihood` `[[3]]` likelihood statistics.
+
+## Vignette
+
+For more information on the method, its arguments, and the other methods
+available in the package, see the package vignette:
+
+- In R: `browseVignettes(package = "rjd3bench")`
+
+- Online: <https://rjdverse.github.io/rjd3bench/articles/rjd3bench.html>
 
 ## References
 
 Proietti, P. (2005). Temporal Disaggregation by State Space Methods:
 Dynamic Regression Methods Revisited. Working papers and Studies,
 European Commission, ISSN 1725-4825.
-
-## See also
-
-For more information, see the vignette:
-
-[`utils::browseVignettes()`](https://rdrr.io/r/utils/browseVignettes.html),
-e.g. `browseVignettes(package = "rjd3bench")`
 
 ## Examples
 

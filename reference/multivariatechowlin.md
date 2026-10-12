@@ -2,25 +2,27 @@
 
 Performs simultaneous temporal disaggregation of a system of low
 frequency time series into higher frequency series, based on the
-multivariate extension of the Chow-Lin model or the Random Walk approach
-(Fernandez).
+multivariate extension of the Chow-Lin model. By default, when the the
+`rho` argument is left at its default value, the function adopts the
+Random Walk approach (Fernandez).
 
 ## Usage
 
 ``` r
 multivariatechowlin(
   series,
-  constant = TRUE,
+  constant = FALSE,
   trend = FALSE,
   indicators = NULL,
   ccseries = NULL,
   ccdefinition = NULL,
   freq = 4L,
-  rhos = 1,
+  rho = 1,
   var = c("fromUnivariate", "allEquals", "userDefined"),
   var.includeCov = FALSE,
   var.shrinkCov = FALSE,
-  var.matrix = NULL
+  var.matrix = NULL,
+  rescale.variance = FALSE
 )
 ```
 
@@ -37,10 +39,10 @@ multivariatechowlin(
   each element specifies whether a constant term is included in the
   model for each series, following the order in which they appear in the
   `series` object. The length of the the vector must match the number of
-  series. If a single Boolean is provided (default if `TRUE`), it is
+  series. If a single Boolean is provided (default if `FALSE`), it is
   applied to all series. Note that this argument is used only with
-  Chow-Lin model (i.e., when `rhos` values are strictly less than 1).
-  For further details, see the package vignette.
+  Chow-Lin model (i.e., when `rho` values are strictly less than 1). For
+  further details, see the package vignette.
 
 - trend:
 
@@ -86,24 +88,23 @@ multivariatechowlin(
   This argument is ignored when at least one indicator series is
   provided for any series.
 
-- rhos:
+- rho:
 
-  Either a numeric value or a vector of numerics. If a vector is
+  Either a numeric value or a vector of numeric. If a vector is
   provided, each element specifies the value of the `rho` parameter
   associated to each series, following the order in which they appear in
-  the `series` object. The length of the the vector must match the
-  number of series. If a single numeric value is provided (default if
-  `1`, corresponding to the Fernandez model), it is applied to all
-  series.
+  the The length of the the vector must match the number of series. If a
+  single numeric value is provided (default if `1`, corresponding to the
+  Fernandez model), it is applied to all series.
 
 - var:
 
   A character string specifying the method used to estimate the
   variance-covariance matrix of the innovations. The default is
-  `"fromUnivariate"`, meaning that is is estimated from the residuals of
-  the univariate models. Others options include `"allEquals"`, which
-  assume a diagonal matrix with identical variances (a strong
-  assumption), and `"userDefined"`, where the matrix is supplied by the
+  `"fromUnivariate"`, meaning that it is estimated empirically from the
+  residuals of the univariate models. Others options include
+  `"allEquals"`, which assume a diagonal matrix with identical
+  variances, and `"userDefined"`, where the matrix is supplied by the
   user via the `var.matrix` argument. For additional details, see the
   package vignette.
 
@@ -117,9 +118,10 @@ multivariatechowlin(
 
 - var.shrinkCov:
 
-  Boolean. Indicates whether a shrinkage covariance estimator should be
-  used. See the vignette for more details. This argument is used only
-  when `var = "fromUnivariate"` and `var.includeCov = TRUE`.
+  Boolean. Indicates whether a shrinkage estimator should be used for
+  covariance. See the package vignette for more details. This argument
+  is used only when `var = "fromUnivariate"` and
+  `var.includeCov = TRUE`.
 
 - var.matrix:
 
@@ -127,50 +129,73 @@ multivariatechowlin(
   used only when `var = "userDefined"` and must be provided in that
   case.
 
+- rescale.variance:
+
+  Boolean. Indicates whether the innovation variance-covariance matrix
+  is assumed to correspond exactly to the true matrix (the default,
+  which is a natural choice when `var = "fromUnivariate"`), or only up
+  to a scaling factor. When set to `TRUE`, the variance of the estimates
+  are rescaled based on the model residuals. This option has no impact
+  on the disaggregated series, but affects the standard errors of both
+  the disaggregated series and the estimated coefficients. See the
+  package vignette for more details.
+
 ## Value
 
 An object of class "JD3_MULTITEMPDISAGG_RSLTS" is returned. The
-following are returned invisibly as a list:
+following are returned as a list:
 
 - `regression` `[[1]]` regression coefficients for each series;
 
-- `estimation` `[[2]]` disaggregated Time-Series and standard deviation
-  for each series, regression effects, smoothing part, parameter and
-  variance-covariance matrix;
+- `estimation` `[[2]]` disaggregated time series and standard errors,
+  regression effects, smoothing parts, parameters and
+  variance-covariance matrix of the innovations;
+
+## Vignette
+
+For more information on the method, its arguments, and the other methods
+available in the package, see the package vignette:
+
+- In R: `browseVignettes(package = "rjd3bench")`
+
+- Online: <https://rjdverse.github.io/rjd3bench/articles/rjd3bench.html>
 
 ## See also
 
 [`multivariatecholette()`](https://rjdverse.github.io/rjd3bench/reference/multivariatecholette.md)
 for time series reconciliation.
 
-For more information, see the vignette:
-
-[`utils::browseVignettes()`](https://rdrr.io/r/utils/browseVignettes.html),
-e.g. `browseVignettes(package = "rjd3bench")`
-
 ## Examples
 
 ``` r
 # Low-frequency data
-Y1 <- ts(c(30.0, 30.6, 31.2, 31.6), frequency = 1, start = c(2010,1))
-Y2 <- ts(c(80.0, 81.2, 82.5, 82.6), frequency = 1, start = c(2010,1))
-Y3 <- ts(c(8.0, 8.1, 8.2, 8.2), frequency = 1, start = c(2010,1))
+Y1 <- ts(c(30.0, 30.6, 31.2, 31.6), frequency = 1, start = c(2010, 1))
+Y2 <- ts(c(80.0, 81.2, 82.5, 82.6), frequency = 1, start = c(2010, 1))
+Y3 <- ts(c(8.0, 8.1, 8.2, 8.2), frequency = 1, start = c(2010, 1))
 lf_series <- list(y1 = Y1, y2 = Y2, y3 = Y3)
 
 # Contemporaneous constraint
-z <- ts(c(27.1,29.8,29.9,31.2,29.4,27.9,30.9,31.7,29.2,30.2,30.6,31.9,29.3,30.4,30.7,32.0), frequency = 4, start = c(2010,1))
+z <- ts(c(27.1, 29.8, 29.9, 31.2, 29.4, 27.9, 30.9, 31.7, 29.2, 30.2, 30.6, 31.9, 29.3, 30.4, 30.7, 32.0),
+        frequency = 4,
+        start = c(2010, 1))
 
 # High-frequency indicators
-x11 <- ts(c(7,7.2,8.1,7.5,8.5,7.8,8.1,8.4,8.6,7.8,8.0,8.3,8.7,7.9,8.0,8.6), frequency=4, start=c(2010,1))
-x12 <- ts(c(18,19.5,19.0,19.7,18.5,19.0,20.3,20.0,18.6,19.5,20.4,20.1,18.7,19.1,20.4,20.8), frequency = 4, start = c(2010,1))
+x11 <- ts(c(7.0, 7.2, 8.1, 7.5, 8.5, 7.8, 8.1, 8.4, 8.6, 7.8, 8.0, 8.3, 8.7, 7.9, 8.0, 8.6),
+          frequency = 4,
+          start=c(2010, 1))
+x12 <- ts(c(18.0, 19.5, 19.0, 19.7, 18.5, 19.0, 20.3, 20.0, 18.6, 19.5, 20.4, 20.1, 18.7, 19.1, 20.4, 20.8),
+          frequency = 4,
+          start = c(2010, 1))
 x2 <- NULL
-x3 <- ts(c(1.5,1.8,2,2.5,2.0,1.5,1.7,2.1,2.1,1.6,1.6,2.2,2.3,1.7,1.9,2.3), frequency = 4, start = c(2010,1))
-indic_series = list(y1 = list(x11, x12),
-                    y2 = NULL,
-                    y3 = x3)
+x3 <- ts(c(1.5, 1.8, 2.0, 2.5, 2.0, 1.5, 1.7, 2.1, 2.1, 1.6, 1.6, 2.2, 2.3, 1.7, 1.9, 2.3),
+         frequency = 4,
+         start = c(2010, 1))
+indic_series <- list(y1 = list(x11, x12),
+                     y2 = NULL,
+                     y3 = x3)
 
 # Check consistency between temporal and contemporaneous constraints
-rowSums(cbind(Y1,Y2,Y3)) - stats::aggregate.ts(z) # ok!
+rowSums(cbind(Y1,Y2,Y3)) - stats::aggregate.ts(z) # should all be 0
 #> Time Series:
 #> Start = 2010 
 #> End = 2013 
@@ -179,21 +204,29 @@ rowSums(cbind(Y1,Y2,Y3)) - stats::aggregate.ts(z) # ok!
 
 # Estimate models and get results
 
-## Mix Chow-Lin - Fernandez, assuming no covariance in the innovations
-rslt1 <- multivariatechowlin(series = lf_series,
-                             constant = c(FALSE, FALSE, TRUE),
-                             trend = c(FALSE, FALSE, FALSE),
-                             indicators = indic_series,
-                             ccseries = list(z = z),
-                             ccdefinition = "z=y1+y2+y3",
-                             freq = 4L,
-                             rhos = c(0.85, 1.0, 0.9),
-                             var = "fromUnivariate",
-                             var.includeCov = FALSE,
-                             var.shrinkCov = FALSE,
-                             var.matrix = NULL)
+## Mix Chow-Lin and Fernandez definitions
 
-do.call(cbind, rslt1$estimation$disagg) # disaggregated series
+### with var-cov matrix estimated from the univariate models, assuming zero covariances
+mtd1 <- multivariatechowlin(
+    series = lf_series,
+    constant = c(FALSE, FALSE, TRUE),
+    trend = c(FALSE, FALSE, FALSE),
+    indicators = indic_series,
+    ccseries = list(z = z),
+    ccdefinition = "z=y1+y2+y3",
+    freq = 4L,
+    rho = c(0.85, 1.0, 0.9),
+    var = "fromUnivariate",
+    var.includeCov = FALSE,
+    var.shrinkCov = FALSE
+)
+
+mtd1$estimation$var$vcov # variance-covariance matrix of the innovations
+#>             [,1]       [,2]         [,3]
+#> [1,] 0.001433366 0.00000000 0.0000000000
+#> [2,] 0.000000000 0.01248872 0.0000000000
+#> [3,] 0.000000000 0.00000000 0.0008793077
+do.call(cbind, mtd1$estimation$disagg) # disaggregated series
 #>               y1       y2       y3
 #> 2010 Q1 6.939861 19.07979 1.080352
 #> 2010 Q2 7.943542 20.14422 1.712236
@@ -211,27 +244,46 @@ do.call(cbind, rslt1$estimation$disagg) # disaggregated series
 #> 2013 Q2 7.800783 21.12535 1.473870
 #> 2013 Q3 8.533515 20.43936 1.727128
 #> 2013 Q4 8.470332 21.06128 2.468392
+do.call(cbind, mtd1$estimation$edisagg) # standard errors of the disaggregated series
+#>                 y1         y2         y3
+#> 2010 Q1 0.03140014 0.05000126 0.04327591
+#> 2010 Q2 0.02476978 0.02968135 0.02119285
+#> 2010 Q3 0.03161386 0.03415475 0.01871516
+#> 2010 Q4 0.03136734 0.05527993 0.04896022
+#> 2011 Q1 0.03913112 0.04196818 0.02434811
+#> 2011 Q2 0.02340147 0.03359607 0.02945418
+#> 2011 Q3 0.02800451 0.03102548 0.01904528
+#> 2011 Q4 0.02767551 0.03865019 0.03038005
+#> 2012 Q1 0.03830267 0.04285251 0.02996976
+#> 2012 Q2 0.02426885 0.03137846 0.02520939
+#> 2012 Q3 0.02668464 0.03353943 0.02737756
+#> 2012 Q4 0.02767089 0.03767300 0.02894481
+#> 2013 Q1 0.04082766 0.04553842 0.03185251
+#> 2013 Q2 0.02391011 0.03567312 0.03129337
+#> 2013 Q3 0.02925037 0.03247505 0.02145259
+#> 2013 Q4 0.03205933 0.04177237 0.02975162
 
-## Mix Chow-Lin - Fernandez, using a shrinkage covariance estimator for the innovations
-rslt2 <- multivariatechowlin(series = lf_series,
-                             constant = c(FALSE, FALSE, TRUE),
-                             trend = c(FALSE, FALSE, FALSE),
-                             indicators = indic_series,
-                             ccseries = list(z = z),
-                             ccdefinition = "z=y1+y2+y3",
-                             freq = 4L,
-                             rhos = c(0.85, 1.0, 0.9),
-                             var = "fromUnivariate",
-                             var.includeCov = TRUE,
-                             var.shrinkCov = TRUE,
-                             var.matrix = NULL)
+### with var-cov matrix estimated from the univariate models, using a shrinkage estimator for the covariance
+mtd2 <- multivariatechowlin(
+    series = lf_series,
+    constant = c(FALSE, FALSE, TRUE),
+    trend = c(FALSE, FALSE, FALSE),
+    indicators = indic_series,
+    ccseries = list(z = z),
+    ccdefinition = "z=y1+y2+y3",
+    freq = 4L,
+    rho = c(0.85, 1.0, 0.9),
+    var = "fromUnivariate",
+    var.includeCov = TRUE,
+    var.shrinkCov = TRUE
+)
 
-rslt2$estimation$vcov # variance-covariance matrix of the innovations
+mtd2$estimation$var$vcov
 #>               [,1]          [,2]          [,3]
 #> [1,]  1.295161e-03 -0.0011701081 -8.709044e-05
 #> [2,] -1.170108e-03  0.0124887216  3.869829e-04
 #> [3,] -8.709044e-05  0.0003869829  5.469873e-05
-do.call(cbind, rslt2$estimation$disagg)
+do.call(cbind, mtd2$estimation$disagg)
 #>               y1       y2       y3
 #> 2010 Q1 7.032124 18.38361 1.684270
 #> 2010 Q2 7.867589 20.02459 1.907825
@@ -249,26 +301,54 @@ do.call(cbind, rslt2$estimation$disagg)
 #> 2013 Q2 7.713462 20.82079 1.865750
 #> 2013 Q3 8.479224 20.27804 1.942738
 #> 2013 Q4 8.417651 21.39175 2.190598
+do.call(cbind, mtd2$estimation$edisagg)
+#>                 y1         y2          y3
+#> 2010 Q1 0.03122149 0.03489408 0.019437511
+#> 2010 Q2 0.02459679 0.02399429 0.007654569
+#> 2010 Q3 0.03134501 0.02994026 0.004814822
+#> 2010 Q4 0.03130689 0.03796795 0.023463260
+#> 2011 Q1 0.03864249 0.03703555 0.007587635
+#> 2011 Q2 0.02316806 0.02491433 0.013169227
+#> 2011 Q3 0.02774779 0.02658016 0.005866159
+#> 2011 Q4 0.02773848 0.02863357 0.012295687
+#> 2012 Q1 0.03750810 0.03678671 0.011896099
+#> 2012 Q2 0.02409236 0.02446696 0.010436899
+#> 2012 Q3 0.02617920 0.02674504 0.011862534
+#> 2012 Q4 0.02772939 0.02812739 0.011246403
+#> 2013 Q1 0.04000515 0.03923857 0.012754946
+#> 2013 Q2 0.02372702 0.02587995 0.014001100
+#> 2013 Q3 0.02882478 0.02793242 0.007815651
+#> 2013 Q4 0.03207397 0.03165254 0.010269251
 
-## Fernandez only (Random walk model) with user-defined variance-covariance matrix
-rslt3 <- multivariatechowlin(series = lf_series,
-                             constant = FALSE,
-                             trend = FALSE,
-                             indicators = indic_series,
-                             ccseries = list(z = z),
-                             ccdefinition = "z=y1+y2+y3",
-                             freq = 4L,
-                             rhos = 1.0,
-                             var = "userDefined",
-                             var.matrix = matrix(
-                                c(0.005, 0.002, 0.001,
-                                  0.002, 0.010, 0.002,
-                                  0.001, 0.002, 0.003),
-                                nrow = 3,
-                                byrow = TRUE)
-                             )
+## Multivariate random walk model (multivariate Fernandez)
 
-do.call(cbind, rslt3$estimation$disagg)
+### with var-cov matrix provided by the user
+mtd3 <- multivariatechowlin(
+    series = lf_series,
+    constant = FALSE,
+    trend = FALSE,
+    indicators = indic_series,
+    ccseries = list(z = z),
+    ccdefinition = "z=y1+y2+y3",
+    freq = 4L,
+    rho = 1.0,
+    var = "userDefined",
+    var.matrix = matrix(
+        c(0.005, 0.002, 0.001,
+          0.002, 0.010, 0.002,
+          0.001, 0.002, 0.003),
+        nrow = 3,
+        byrow = TRUE
+    ),
+    rescale.variance = TRUE
+)
+
+mtd3$estimation$var$vcov
+#>       [,1]  [,2]  [,3]
+#> [1,] 0.005 0.002 0.001
+#> [2,] 0.002 0.010 0.002
+#> [3,] 0.001 0.002 0.003
+do.call(cbind, mtd3$estimation$disagg)
 #>               y1       y2       y3
 #> 2010 Q1 6.108983 19.72409 1.266923
 #> 2010 Q2 8.107219 19.93250 1.760283
@@ -286,4 +366,22 @@ do.call(cbind, rslt3$estimation$disagg)
 #> 2013 Q2 7.378121 21.19157 1.830307
 #> 2013 Q3 8.590304 20.39480 1.714896
 #> 2013 Q4 9.180162 20.53608 2.283757
+do.call(cbind, mtd3$estimation$edisagg)
+#>                y1        y2        y3
+#> 2010 Q1 0.9220615 0.7989343 0.8622564
+#> 2010 Q2 0.4768654 0.4866868 0.4006106
+#> 2010 Q3 0.6551743 0.5625929 0.3984178
+#> 2010 Q4 0.6691278 0.7896144 0.8948905
+#> 2011 Q1 0.6998249 0.6385928 0.4871380
+#> 2011 Q2 0.6558340 0.5338923 0.5923964
+#> 2011 Q3 0.5467235 0.5141900 0.3727830
+#> 2011 Q4 0.6137986 0.6053674 0.5866327
+#> 2012 Q1 0.7170487 0.6785675 0.5725294
+#> 2012 Q2 0.5621174 0.4940398 0.5017914
+#> 2012 Q3 0.5367615 0.5579618 0.5031171
+#> 2012 Q4 0.6137582 0.6007979 0.5642130
+#> 2013 Q1 0.7648739 0.7176635 0.6192982
+#> 2013 Q2 0.7372759 0.5875706 0.6343860
+#> 2013 Q3 0.5358664 0.5044930 0.4166496
+#> 2013 Q4 0.8889961 0.7641042 0.6227456
 ```

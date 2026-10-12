@@ -72,19 +72,21 @@ denton_modelbased(
 ## Value
 
 An object of class "JD3_MBDENTON_RSLTS" is returned. The following are
-returned invisibly as a list:
+returned as a list:
 
-- `estimation` `[[1]]` disaggregated Time-Series, BI ratios and standard
-  deviations;
+- `estimation` `[[1]]` disaggregated time series, BI ratios and standard
+  errors;
 
 - `likelihood` `[[2]]` likelihood statistics.
 
-## See also
+## Vignette
 
-For more information, see the vignette:
+For more information on the method, its arguments, and the other methods
+available in the package, see the package vignette:
 
-[`utils::browseVignettes()`](https://rdrr.io/r/utils/browseVignettes.html),
-e.g. `browseVignettes(package = "rjd3bench")`
+- In R: `browseVignettes(package = "rjd3bench")`
+
+- Online: <https://rjdverse.github.io/rjd3bench/articles/rjd3bench.html>
 
 ## Examples
 
